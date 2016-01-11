@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia;
-
 
 use AlgoliaSearch\Client;
 
@@ -36,13 +34,13 @@ class AlgoliaManager
     }
 
     /**
-     * Returns the Algolia Client
+     * Returns the Algolia Client.
      *
      * @return Client
      */
     public function getClient()
     {
-        if(is_null($this->client)){
+        if (is_null($this->client)) {
             $this->client = $this->factory->make($this->config);
         }
 
