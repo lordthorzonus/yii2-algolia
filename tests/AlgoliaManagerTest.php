@@ -1,14 +1,11 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests;
-
 
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use Mockery as m;
-
 
 class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +14,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     {
         $config = [
             'applicationId' => 'test',
-            'appKey' => 'secret'
+            'appKey' => 'secret',
         ];
         $mockAlgoliaClient = m::mock(Client::class);
 
@@ -26,13 +23,13 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $client = $manager->getClient();
         $this->assertEquals($mockAlgoliaClient, $client);
     }
-    
+
     /** @test */
     public function it_delegates_the_methods_to_Algolia_client()
     {
         $config = [
             'applicationId' => 'test',
-            'appKey' => 'secret'
+            'appKey' => 'secret',
         ];
 
         $mockAlgoliaClient = m::mock(Client::class);
@@ -41,7 +38,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getManager($config, $mockAlgoliaClient);
 
-        $manager->initIndex("test");
+        $manager->initIndex('test');
     }
 
     /**

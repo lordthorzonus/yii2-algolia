@@ -1,15 +1,12 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia;
-
 
 use AlgoliaSearch\Client;
 use InvalidArgumentException;
 
 class AlgoliaFactory
 {
-
     /**
      * Makes a new Algolia Client.
      *
@@ -47,8 +44,8 @@ class AlgoliaFactory
      */
     protected function getConfig(array $config)
     {
-        if (!array_key_exists('applicationId', $config) || !array_key_exists('apiKey', $config)) {
-            throw new InvalidArgumentException("Configuration keys applicationId and apiKey are required");
+        if (! array_key_exists('applicationId', $config) || ! array_key_exists('apiKey', $config)) {
+            throw new InvalidArgumentException('Configuration keys applicationId and apiKey are required');
         }
 
         $applicationId = $config['applicationId'];

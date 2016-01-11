@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests;
-
 
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaFactory;
@@ -15,7 +13,7 @@ class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new AlgoliaFactory();
         $client = $factory->make([
             'applicationId' => 'app-id',
-            'apiKey' => 'secret'
+            'apiKey' => 'secret',
         ]);
 
         $this->assertInstanceOf(Client::class, $client);
@@ -30,7 +28,7 @@ class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $factory = new AlgoliaFactory();
         $client = $factory->make([
-            'apiKey' => 'secret'
+            'apiKey' => 'secret',
         ]);
     }
 
@@ -46,5 +44,4 @@ class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
             'applicationId' => 'app-id',
         ]);
     }
-
 }

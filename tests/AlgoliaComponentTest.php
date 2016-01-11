@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests;
-
 
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
@@ -21,8 +19,8 @@ class AlgoliaComponentTest extends TestCase
                     'class' => AlgoliaComponent::class,
                     'applicationId' => 'test',
                     'apiKey' => 'secret',
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 
@@ -41,10 +39,10 @@ class AlgoliaComponentTest extends TestCase
             'applicationId' => 'test',
             'apiKey' => 'secret',
             'hostsArray' => null,
-            'options' => []
+            'options' => [],
         ], $manager->getConfig());
     }
-    
+
     /** @test */
     public function it_delegates_the_methods_to_AlgoliaManager()
     {
@@ -52,7 +50,7 @@ class AlgoliaComponentTest extends TestCase
             'applicationId' => 'test',
             'apiKey' => 'secret',
             'hostsArray' => null,
-            'options' => []
+            'options' => [],
         ], Yii::$app->algolia->getConfig());
     }
 }

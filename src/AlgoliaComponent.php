@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia;
-
 
 use Yii;
 use yii\base\Application;
@@ -11,24 +9,23 @@ use yii\base\Component;
 
 class AlgoliaComponent extends Component implements BootstrapInterface
 {
-
     /**
-     * @var string $applicationId The application ID you have in your admin interface
+     * @var string The application ID you have in your admin interface
      */
     public $applicationId;
 
     /**
-     * @var string $apiKey A valid API key for the service
+     * @var string A valid API key for the service
      */
     public $apiKey;
 
     /**
-     * @var null|array $hostsArray The list of hosts that you have received for the service
+     * @var null|array The list of hosts that you have received for the service
      */
     public $hostsArray = null;
 
     /**
-     * @var array $options
+     * @var array
      */
     public $options = [];
 
@@ -44,7 +41,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-        Yii::$container->set(AlgoliaManager::class, function(){
+        Yii::$container->set(AlgoliaManager::class, function () {
              return $this->createManager();
         });
     }
@@ -60,7 +57,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     }
 
     /**
-     * Returns a new AlgoliaManager
+     * Returns a new AlgoliaManager.
      *
      * @return array
      */
@@ -71,7 +68,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
             'applicationId' => $this->applicationId,
             'apiKey' => $this->apiKey,
             'hostsArray' => $this->hostsArray,
-            'options' => $this->options
+            'options' => $this->options,
         ];
 
         return new AlgoliaManager($factory, $config);
