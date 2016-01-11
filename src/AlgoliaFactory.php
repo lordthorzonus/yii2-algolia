@@ -21,11 +21,11 @@ class AlgoliaFactory
     {
         list($applicationId, $apiKey, $hostsArray, $options) = $this->getConfig($config);
 
-        return $this->getClient($applicationId, $apiKey, $hostsArray, $options);
+        return $this->createClient($applicationId, $apiKey, $hostsArray, $options);
     }
 
     /**
-     * Returns the Algolia Client.
+     * Creates an new Algolia Client.
      *
      * @param string $applicationId The application ID you have in your admin interface
      * @param string $apiKey A valid API key for the service
@@ -34,7 +34,7 @@ class AlgoliaFactory
      *
      * @return Client
      */
-    protected function getClient($applicationId, $apiKey, $hostsArray = null, $options = [])
+    protected function createClient($applicationId, $apiKey, $hostsArray = null, $options = [])
     {
         return new Client($applicationId, $apiKey, $hostsArray, $options);
     }

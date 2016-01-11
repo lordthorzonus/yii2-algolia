@@ -47,5 +47,4 @@ class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
-
 }

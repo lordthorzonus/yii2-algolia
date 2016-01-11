@@ -50,6 +50,16 @@ class AlgoliaManager
     }
 
     /**
+     * Returns the config array.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Dynamically pass methods to the Algolia Client.
      *
      * @param string $method
