@@ -50,7 +50,7 @@ class MyController
 
 ```
 
-You can also access component like a Yii component.
+You can also access the manager like a Yii component.
 
 ```php
 use Yii;
