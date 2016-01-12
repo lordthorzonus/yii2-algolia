@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
-
 
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\AlgoliaComponent;
@@ -35,7 +33,7 @@ class SearchableTest extends TestCase
         $this->dummyAlgoliaManager = m::mock(AlgoliaManager::class);
 
         //Override the Registered AlgoliaManager with a mock
-        Yii::$container->set(AlgoliaManager::class, function(){
+        Yii::$container->set(AlgoliaManager::class, function () {
             return $this->dummyAlgoliaManager;
         });
     }
@@ -88,7 +86,7 @@ class SearchableTest extends TestCase
 
         $testModel->index();
     }
-    
+
     /** @test */
     public function it_can_be_removed_from_indices()
     {
@@ -100,5 +98,4 @@ class SearchableTest extends TestCase
 
         $testModel->removeFromIndex();
     }
-
 }

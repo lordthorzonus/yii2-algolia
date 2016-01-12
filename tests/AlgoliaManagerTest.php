@@ -41,7 +41,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager->initIndex('test');
     }
-    
+
     /** @test */
     public function it_clear_the_indices_for_the_given_active_record_class()
     {
