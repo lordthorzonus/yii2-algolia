@@ -59,11 +59,11 @@ $index = Yii::$app->algolia->initIndex("contacts");
 ```
 
 ## ActiveRecord Helpers
-**Note that this is still very much work in progress**
+**Note that this is still very much work in progress**.
 This package also provides helpers for dealing with Yii's ActiveRecord Models.
 
 ### Configuring an ActiveRecord Class
-To use the helpers just implement the `leinonen\Yii2Algolia\ActiveRecord\SearchableInterface`. The `leinonen\Yii2Algolia\Searchable` trait provides everything that you need. You can control what fields are indexed to Algolia by cahing the `fields()` and `extraFields()` methods like you normally would. You can also override the `getAlgoliaRecord()` for more custom use cases.
+To use the helpers just implement the `leinonen\Yii2Algolia\ActiveRecord\SearchableInterface`. The `leinonen\Yii2Algolia\Searchable` trait provides everything that you need. You can control what fields are indexed to Algolia by using the `fields()` and `extraFields()` methods like you normally would. You can also override the `getAlgoliaRecord()` for more custom use cases.
 
 ```php
 use leinonen\Yii2Algolia\ActiveRecord\Searchable;
