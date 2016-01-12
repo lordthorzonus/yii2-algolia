@@ -57,3 +57,67 @@ use Yii;
 
 $index = Yii::$app->algolia->initIndex("contacts");
 ```
+
+## ActiveRecord Helpers
+**Note that this is still very much work in progress**
+This package also provides helpers for dealing with Yii's ActiveRecord Models.
+
+### Configuring an ActiveRecord Class
+To use the helpers just implement the `leinonen\Yii2Algolia\ActiveRecord\SearchableInterface`. The `leinonen\Yii2Algolia\Searchable` trait provides everything that you need. You can control what fields are indexed to Algolia by cahing the `fields()` and `extraFields()` methods like you normally would. You can also override the `getAlgoliaRecord()` for more custom use cases.
+
+```php
+use leinonen\Yii2Algolia\ActiveRecord\Searchable;
+use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
+use yii\db\ActiveRecord;
+
+class Contact extends ActiveRecord
+{
+    use Searchable;
+}
+```
+
+By default the helpers will use the class name as the name of the index. You can also specify the indices you want to sync the clas to:
+```php
+class Contact extends ActiveRecord
+{
+    use Searchable;
+    
+    public function indices()
+    {
+        return ['first_index', 'second_index'];
+    }
+}
+```
+###Indexing
+
+####Manual Indexing
+You can trigger indexing using the `index()` instance method.
+
+```php
+$contact = new Contact();
+$contact->name = 'test';
+$contact->index();
+```
+
+####Manual Removal
+And trigger the removing using the `removeFromIndex()` instance method.
+
+```php
+$contact = Contact::findOne(['name' => 'test');
+$contact->removeFromIndex();
+```
+
+####Re-indexing
+To safely reindex all your records (index to a temporary index + move the temporary index to the current one atomically), use the `reIndex()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+
+```php
+$manager->reIndex(new Contact());
+```
+Note that the manager requires and actual instance of the class
+ 
+####Clearing Indices
+To clear indices where the class is synced use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+
+```php
+$manager->clearIndices(new Contact());
+```

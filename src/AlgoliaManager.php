@@ -3,8 +3,32 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
+use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
 
+/**
+ * @method setConnectTimeout($connectTimeout, $timeout = 30, $searchTimeout = 5)
+ * @method enableRateLimitForward($adminAPIKey, $endUserIP, $rateLimitAPIKey)
+ * @method disableRateLimitForward()
+ * @method isAlive()
+ * @method setExtraHeader($key, $value)
+ * @method multipleQueries($queries, $indexNameKey = "indexName", $strategy = "none")
+ * @method listIndexes()
+ * @method deleteIndex($indexName)
+ * @method moveIndex($srcIndexName, $dstIndexName)
+ * @method copyIndex($srcIndexName, $dstIndexName)
+ * @method getLogs($offset = 0, $length = 10, $type = "all")
+ * @method initIndex($indexName)
+ * @method listUserKeys()
+ * @method getUserKeyACL($key)
+ * @method deleteUserKey($key)
+ * @method addUserKey($obj, $validity = 0, $maxQueriesPerIPPerHour = 0, $maxHitsPerQuery = 0, $indexes = null)
+ * @method batch($requests)
+ * @method generateSecuredApiKey($privateApiKey, $query, $userToken = null)
+ * @method request($context, $method, $path, $params = array(), $data = array(), $hostsArray, $connectTimeout, $readTimeout)
+ * @method doRequest($context, $method, $host, $path, $params, $data, $connectTimeout, $readTimeout)
+ * @see Client
+ */
 class AlgoliaManager
 {
     /**
@@ -75,6 +99,8 @@ class AlgoliaManager
 
         foreach ($indices as $index) {
             $temporaryIndexName = 'tmp_' . $index->indexName;
+
+            /** @var Index $temporaryIndex */
             $temporaryIndex = $this->initIndex($temporaryIndexName);
             $temporaryIndex->addObjects($records);
 
