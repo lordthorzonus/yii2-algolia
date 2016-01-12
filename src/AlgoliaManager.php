@@ -69,11 +69,11 @@ class AlgoliaManager
         $indices = $activeRecord->getIndices();
         $records = [];
 
-        foreach($models as $model) {
+        foreach ($models as $model) {
             $records[] = $model->getAlgoliaRecord();
         }
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $temporaryIndexName = 'tmp_' . $index->indexName;
             $temporaryIndex = $this->initIndex($temporaryIndexName);
             $temporaryIndex->addObjects($records);
@@ -90,7 +90,7 @@ class AlgoliaManager
     {
         $indices = $activeRecord->getIndices();
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $index->clearIndex();
         }
     }

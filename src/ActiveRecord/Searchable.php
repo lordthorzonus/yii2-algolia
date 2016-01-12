@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\ActiveRecord;
-
 
 use leinonen\Yii2Algolia\AlgoliaManager;
 use Yii;
@@ -33,14 +31,15 @@ trait Searchable
         $manager = $this->getAlgoliaManager();
         $indices = $this->indices();
 
-        if(empty($indices)){
+        if (empty($indices)) {
             $className = (new \ReflectionClass($this))->getShortName();
+
             return [$manager->initIndex($className)];
         }
 
         $indexes = [];
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $indexes[] = $manager->initIndex($index);
         }
 
@@ -67,7 +66,7 @@ trait Searchable
     {
         $indices = $this->getIndices();
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $index->addObject($this->getAlgoliaRecord());
         }
     }
@@ -81,7 +80,7 @@ trait Searchable
     {
         $indices = $this->getIndices();
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $index->deleteObject($this->getPrimaryKey());
         }
     }
@@ -96,5 +95,4 @@ trait Searchable
     {
         return Yii::$container->get(AlgoliaManager::class);
     }
-
 }

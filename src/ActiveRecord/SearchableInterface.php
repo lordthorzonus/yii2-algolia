@@ -1,6 +1,5 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\ActiveRecord;
 
 use yii\db\ActiveRecordInterface;
@@ -40,5 +39,4 @@ interface SearchableInterface extends ActiveRecordInterface
      * @throws \Exception
      */
     public function removeFromIndex();
-
 }
