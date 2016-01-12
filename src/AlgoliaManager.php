@@ -89,7 +89,7 @@ class AlgoliaManager
     public function reIndex(SearchableInterface $activeRecord)
     {
         /** @var SearchableInterface[] $models */
-        $models = SearchableInterface::find()->all();
+        $models = $activeRecord::find()->all();
         $indices = $activeRecord->getIndices();
         $records = [];
 
