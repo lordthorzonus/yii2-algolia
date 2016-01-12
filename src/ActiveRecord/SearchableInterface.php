@@ -3,8 +3,9 @@
 
 namespace leinonen\Yii2Algolia\ActiveRecord;
 
+use yii\db\ActiveRecordInterface;
 
-interface SearchableInterface
+interface SearchableInterface extends ActiveRecordInterface
 {
     /**
      * An array of indices that this model uses. If none specified

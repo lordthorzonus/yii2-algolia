@@ -33,12 +33,17 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         ];
 
         $mockAlgoliaClient = m::mock(Client::class);
-
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test');
 
         $manager = $this->getManager($config, $mockAlgoliaClient);
 
         $manager->initIndex('test');
+    }
+    
+    /** @test */
+    public function it_can_reindex_the_indices_for_given_active_record_model()
+    {
+        
     }
 
     /**

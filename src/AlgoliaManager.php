@@ -3,6 +3,7 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
+use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
 
 class AlgoliaManager
 {
@@ -55,6 +56,43 @@ class AlgoliaManager
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Re-indexes the indices safely for the given ActiveRecord Class.
+     * @param SearchableInterface $activeRecord
+     */
+    public function reIndex(SearchableInterface $activeRecord)
+    {
+        /** @var SearchableInterface[] $models */
+        $models = SearchableInterface::find()->all();
+        $indices = $activeRecord->getIndices();
+        $records = [];
+
+        foreach($models as $model) {
+            $records[] = $model->getAlgoliaRecord();
+        }
+
+        foreach($indices as $index){
+            $temporaryIndexName = 'tmp_' . $index->indexName;
+            $temporaryIndex = $this->initIndex($temporaryIndexName);
+            $temporaryIndex->addObjects($records);
+
+            $this->moveIndex($temporaryIndexName, $index->indexName);
+        }
+    }
+
+    /**
+     * Clears the indices for the given ActiveRecord Class.
+     * @param SearchableInterface $activeRecord
+     */
+    public function clearIndices(SearchableInterface $activeRecord)
+    {
+        $indices = $activeRecord->getIndices();
+
+        foreach($indices as $index){
+            $index->clearIndex();
+        }
     }
 
     /**
