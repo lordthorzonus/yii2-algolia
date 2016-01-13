@@ -22,28 +22,21 @@ trait Searchable
     }
 
     /**
-     * Returns the indices for this model.
+     * Returns an array of indices for this model.
      *
-     * @return \AlgoliaSearch\Index[]
+     * @return array
      */
     public function getIndices()
     {
-        $manager = $this->getAlgoliaManager();
         $indices = $this->indices();
 
         if (empty($indices)) {
             $className = (new \ReflectionClass($this))->getShortName();
 
-            return [$manager->initIndex($className)];
+            return [$className];
         }
 
-        $indexes = [];
-
-        foreach ($indices as $index) {
-            $indexes[] = $manager->initIndex($index);
-        }
-
-        return $indexes;
+        return $indices;
     }
 
     /**
@@ -64,9 +57,11 @@ trait Searchable
      */
     public function index()
     {
+        $manager = $this->getAlgoliaManager();
         $indices = $this->getIndices();
 
         foreach ($indices as $index) {
+            $index = $manager->initIndex($index);
             $index->addObject($this->getAlgoliaRecord());
         }
     }
@@ -78,9 +73,11 @@ trait Searchable
      */
     public function removeFromIndex()
     {
+        $manager = $this->getAlgoliaManager();
         $indices = $this->getIndices();
 
         foreach ($indices as $index) {
+            $index = $manager->initIndex($index);
             $index->deleteObject($this->getPrimaryKey());
         }
     }

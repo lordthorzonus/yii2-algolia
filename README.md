@@ -70,7 +70,7 @@ use leinonen\Yii2Algolia\ActiveRecord\Searchable;
 use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
 use yii\db\ActiveRecord;
 
-class Contact extends ActiveRecord
+class Contact extends ActiveRecord implements SearchableInterface
 {
     use Searchable;
 }
@@ -78,7 +78,7 @@ class Contact extends ActiveRecord
 
 By default the helpers will use the class name as the name of the index. You can also specify the indices you want to sync the clas to:
 ```php
-class Contact extends ActiveRecord
+class Contact extends ActiveRecord implements SearchableInterface
 {
     use Searchable;
     

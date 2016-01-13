@@ -49,8 +49,7 @@ class SearchableTest extends TestCase
     public function it_can_return_indices_for_the_model()
     {
         $testModel = new DummyModel();
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with('DummyModel')->andReturn('indiceObject');
-        $this->assertEquals(['indiceObject'], $testModel->getIndices());
+        $this->assertEquals(['DummyModel'], $testModel->getIndices());
     }
 
     /** @test */
@@ -58,10 +57,9 @@ class SearchableTest extends TestCase
     {
         $testModel = m::mock(DummyModel::class)->makePartial();
         $testModel->shouldReceive('indices')->andReturn(['firstIndice', 'secondIndice']);
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->once()->with('firstIndice')->andReturn('indiceObject1');
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->once()->with('secondIndice')->andReturn('indiceObject2');
 
-        $this->assertEquals(['indiceObject1', 'indiceObject2'], $testModel->getIndices());
+
+        $this->assertEquals(['firstIndice', 'secondIndice'], $testModel->getIndices());
     }
 
     /** @test */
@@ -78,12 +76,14 @@ class SearchableTest extends TestCase
     public function it_can_be_pushed_to_indices()
     {
         $testModel = m::mock(DummyModel::class)->makePartial();
-        $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('addObject')->once()->with(['objectID' => 1, 'property1' => 'test']);
-        $testModel->shouldReceive('getIndices')->andReturn([$mockIndex]);
         $testModel->shouldReceive('toArray')->andReturn(['property1' => 'test']);
         $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
+        $testModel->shouldReceive('getIndices')->andReturn(['DummyModel']);
 
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->shouldReceive('addObject')->once()->with(['objectID' => 1, 'property1' => 'test']);
+
+        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with('DummyModel')->andReturn($mockIndex);
         $testModel->index();
     }
 
@@ -91,11 +91,14 @@ class SearchableTest extends TestCase
     public function it_can_be_removed_from_indices()
     {
         $testModel = m::mock(DummyModel::class)->makePartial();
+        $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
+        $testModel->shouldReceive('getIndices')->andReturn(['DummyModel']);
+
+
         $mockIndex = m::mock(Index::class);
         $mockIndex->shouldReceive('deleteObject')->once()->with(1);
-        $testModel->shouldReceive('getIndices')->andReturn([$mockIndex]);
-        $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
 
+        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with('DummyModel')->andReturn($mockIndex);
         $testModel->removeFromIndex();
     }
 }

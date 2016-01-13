@@ -18,7 +18,7 @@ use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
  * @method moveIndex($srcIndexName, $dstIndexName)
  * @method copyIndex($srcIndexName, $dstIndexName)
  * @method getLogs($offset = 0, $length = 10, $type = "all")
- * @method initIndex($indexName)
+ * @method Index initIndex($indexName)
  * @method listUserKeys()
  * @method getUserKeyACL($key)
  * @method deleteUserKey($key)
@@ -98,13 +98,13 @@ class AlgoliaManager
         }
 
         foreach ($indices as $index) {
-            $temporaryIndexName = 'tmp_' . $index->indexName;
+            $temporaryIndexName = 'tmp_' . $index;
 
             /** @var Index $temporaryIndex */
             $temporaryIndex = $this->initIndex($temporaryIndexName);
             $temporaryIndex->addObjects($records);
 
-            $this->moveIndex($temporaryIndexName, $index->indexName);
+            $this->moveIndex($temporaryIndexName, $index);
         }
     }
 

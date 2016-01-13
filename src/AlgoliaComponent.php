@@ -59,7 +59,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     /**
      * Returns a new AlgoliaManager.
      *
-     * @return array
+     * @return AlgoliaManager
      */
     protected function createManager()
     {
