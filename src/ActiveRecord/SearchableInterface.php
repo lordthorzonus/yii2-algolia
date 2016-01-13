@@ -6,7 +6,6 @@ use yii\db\ActiveRecordInterface;
 
 interface SearchableInterface extends ActiveRecordInterface
 {
-
     /**
      * Returns an array of indices for this model.
      *
@@ -20,5 +19,4 @@ interface SearchableInterface extends ActiveRecordInterface
      * @return array
      */
     public function getAlgoliaRecord();
-
 }

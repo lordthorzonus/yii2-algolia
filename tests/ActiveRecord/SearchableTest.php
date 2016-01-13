@@ -58,7 +58,6 @@ class SearchableTest extends TestCase
         $testModel = m::mock(DummyModel::class)->makePartial();
         $testModel->shouldReceive('indices')->andReturn(['firstIndice', 'secondIndice']);
 
-
         $this->assertEquals(['firstIndice', 'secondIndice'], $testModel->getIndices());
     }
 
@@ -93,7 +92,6 @@ class SearchableTest extends TestCase
         $testModel = m::mock(DummyModel::class)->makePartial();
         $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
         $testModel->shouldReceive('getIndices')->andReturn(['DummyModel']);
-
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->shouldReceive('deleteObject')->once()->with(1);
