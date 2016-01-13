@@ -15,13 +15,9 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_can_return_the_client()
     {
-        $config = [
-            'applicationId' => 'test',
-            'appKey' => 'secret',
-        ];
         $mockAlgoliaClient = m::mock(Client::class);
 
-        $manager = $this->getManager($config, $mockAlgoliaClient);
+        $manager = $this->getManager($mockAlgoliaClient);
 
         $client = $manager->getClient();
         $this->assertEquals($mockAlgoliaClient, $client);
@@ -30,16 +26,11 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_delegates_the_methods_to_Algolia_client()
     {
-        $config = [
-            'applicationId' => 'test',
-            'appKey' => 'secret',
-        ];
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test');
 
-        $manager = $this->getManager($config, $mockAlgoliaClient);
-
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->initIndex('test');
     }
 
@@ -63,17 +54,12 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
 
-        $config = [
-            'applicationId' => 'test',
-            'appKey' => 'secret',
-        ];
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_test')->andReturn($mockTemporaryIndex);
         $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_test', 'test']);
 
-        $manager = $this->getManager($config, $mockAlgoliaClient);
-
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->reIndex($testModel);
 
     }
@@ -86,26 +72,29 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockIndex->shouldReceive('clearIndex');
         $testModel->shouldReceive('getIndices')->andReturn([$mockIndex]);
 
-        $config = [
-            'applicationId' => 'test',
-            'appKey' => 'secret',
-        ];
         $mockAlgoliaClient = m::mock(Client::class);
 
-        $manager = $this->getManager($config, $mockAlgoliaClient);
-
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->clearIndices($testModel);
     }
 
     /**
      * Returns an new AlgoliaManager with mocked Factory.
-     * @param $config
+     *
      * @param $client
+     * @param $config
      *
      * @return AlgoliaManager
      */
-    protected function getManager($config, $client)
+    protected function getManager($client, $config = null)
     {
+        if(!$config){
+            $config = [
+                'applicationId' => 'test',
+                'appKey' => 'secret',
+            ];
+        }
+
         $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
         $mockAlgoliaFactory->shouldReceive('make')->with($config)->andReturn($client);
         $manager = new AlgoliaManager($mockAlgoliaFactory, $config);
