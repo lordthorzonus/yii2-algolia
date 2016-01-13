@@ -55,7 +55,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getManager($mockAlgoliaClient);
         $manager->reIndex($testModel);
-
     }
 
     /** @test */
@@ -82,7 +81,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getManager($client, $config = null)
     {
-        if(!$config){
+        if (! $config) {
             $config = [
                 'applicationId' => 'test',
                 'appKey' => 'secret',
