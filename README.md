@@ -76,7 +76,7 @@ class Contact extends ActiveRecord implements SearchableInterface
 }
 ```
 
-By default the helpers will use the class name as the name of the index. You can also specify the indices you want to sync the clas to:
+By default the helpers will use the class name as the name of the index. You can also specify the indices you want to sync the class to:
 ```php
 class Contact extends ActiveRecord implements SearchableInterface
 {
@@ -107,8 +107,8 @@ $contact = Contact::findOne(['name' => 'test');
 $contact->removeFromIndex();
 ```
 
-####Re-indexing
-To safely reindex all your ActiveRecord models(index to a temporary index + move the temporary index to the current one atomically), use the `reIndex()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+####Reindexing
+To safely reindex all your ActiveRecord models(index to a temporary index + move the temporary index to the current one, use the `reIndex()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 
 ```php
 $manager->reIndex(new Contact());

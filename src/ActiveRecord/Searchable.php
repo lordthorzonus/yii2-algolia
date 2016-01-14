@@ -6,7 +6,7 @@ use leinonen\Yii2Algolia\AlgoliaManager;
 use Yii;
 
 /**
- * Simple trait that implements methods needed for the SearchableInterface.
+ * Simple trait that implements methods needed for the SearchableInterface + couple helpers for dealing with ActiveRecords.
  */
 trait Searchable
 {
