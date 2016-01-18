@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\ActiveRecord;
-
 
 use yii\db\ActiveRecordInterface;
 
@@ -17,7 +15,7 @@ class ActiveRecordFactory
      */
     public function make($className)
     {
-        if(! (new \ReflectionClass($className))->implementsInterface(ActiveRecordInterface::class)){
+        if (! (new \ReflectionClass($className))->implementsInterface(ActiveRecordInterface::class)) {
             throw new \InvalidArgumentException("Cannot initiate a class ({$className}) which doesn't implement \\yii\\db\\ActiveRecordInterface");
         }
 

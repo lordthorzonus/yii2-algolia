@@ -68,7 +68,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
         $manager->reIndex(DummyActiveRecordModel::class);
     }
-    
+
     /**
      * @test
      * @expectedException \InvalidArgumentException
@@ -134,7 +134,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
         $manager->pushToIndex($dummyModel);
     }
-    
+
     /** @test */
     public function it_can_remove_an_object_that_implements_searchable_interface_from_index()
     {
