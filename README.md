@@ -101,7 +101,7 @@ $contact->name = 'test';
 $contact->index();
 ```
 
-Or if you fancy service like architecture, you can use helper methods on `leinonen\Yii2Algolia\AlgoliaManager`:
+Or if you fancy a service like architecture, you can use helper methods on `leinonen\Yii2Algolia\AlgoliaManager`:
 
 ```php
 $contact = new Contact();
