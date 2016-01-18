@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
-
 
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use leinonen\Yii2Algolia\AlgoliaFactory;

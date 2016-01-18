@@ -98,7 +98,7 @@ class AlgoliaManager
     {
         $indices = $searchableModel->getIndices();
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $record = $searchableModel->getAlgoliaRecord();
             $this->initIndex($index)->addObject($record);
         }
@@ -115,7 +115,7 @@ class AlgoliaManager
     {
         $indices = $searchableModel->getIndices();
 
-        foreach($indices as $index){
+        foreach ($indices as $index) {
             $objectID = $searchableModel->getObjectID();
             $this->initIndex($index)->deleteObject($objectID);
         }
@@ -134,7 +134,7 @@ class AlgoliaManager
         /** @var SearchableInterface[] $models */
         $models = $activeRecord->find()->all();
 
-        /** @var SearchableInterface $activeRecord */
+        /* @var SearchableInterface $activeRecord */
         $indices = $activeRecord->getIndices();
         $records = [];
 
@@ -163,17 +163,17 @@ class AlgoliaManager
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);
 
-        /** @var SearchableInterface $activeRecord */
+        /* @var SearchableInterface $activeRecord */
         $indices = $activeRecord->getIndices();
 
-        foreach ($indices as $index){
+        foreach ($indices as $index) {
             $this->initIndex($index)->clearIndex();
         }
     }
 
     /**
      * Dynamically pass methods to the Algolia Client.
-
+     
      * @param string $method
      * @param array  $parameters
      *
@@ -185,13 +185,13 @@ class AlgoliaManager
     }
 
     /**
-     * Checks if the given class implements SearchableInterface
+     * Checks if the given class implements SearchableInterface.
      *
      * @param string $className The class name to be checked.
      */
     private function checkImplementsSearchableInterface($className)
     {
-        if(! (new \ReflectionClass($className))->implementsInterface(SearchableInterface::class)){
+        if (! (new \ReflectionClass($className))->implementsInterface(SearchableInterface::class)) {
             throw new \InvalidArgumentException("The class: {$className} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
         }
     }

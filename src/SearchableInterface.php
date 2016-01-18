@@ -2,7 +2,6 @@
 
 namespace leinonen\Yii2Algolia;
 
-
 interface SearchableInterface
 {
     /**
@@ -14,7 +13,7 @@ interface SearchableInterface
 
     /**
      * Returns the model in algolia friendly array form.
-     * Must return an key called objectID for identifying with Algolia
+     * Must return an key called objectID for identifying with Algolia.
      *
      * @return array
      */
@@ -26,5 +25,4 @@ interface SearchableInterface
      * @return int
      */
     public function getObjectID();
-
 }
