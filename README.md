@@ -59,15 +59,14 @@ $index = Yii::$app->algolia->initIndex("contacts");
 ```
 
 ## ActiveRecord Helpers
-**Note that this is still very much work in progress**.
 This package also provides helpers for dealing with Yii's ActiveRecord Models.
 
 ### Configuring an ActiveRecord Class
-To use the helpers just implement the `leinonen\Yii2Algolia\ActiveRecord\SearchableInterface`. The `leinonen\Yii2Algolia\Searchable` trait provides everything that you need. You can control what fields are indexed to Algolia by using the `fields()` and `extraFields()` methods like you normally would. You can also override the `getAlgoliaRecord()` for more custom use cases.
+To use the helpers just implement the `leinonen\Yii2Algolia\SearchableInterface`. The `leinonen\Yii2Algolia\Searchable` trait provides everything that you need. You can control what fields are indexed to Algolia by using the `fields()` and `extraFields()` methods like you normally would. You can also override the `getAlgoliaRecord()` for more custom use cases.
 
 ```php
 use leinonen\Yii2Algolia\ActiveRecord\Searchable;
-use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
+use leinonen\Yii2Algolia\SearchableInterface;
 use yii\db\ActiveRecord;
 
 class Contact extends ActiveRecord implements SearchableInterface
@@ -88,15 +87,26 @@ class Contact extends ActiveRecord implements SearchableInterface
     }
 }
 ```
+
+You can also also implement the `leinonen\Yii2Algolia\SearchableInterface` for plain old PHP objects and then use the `leinonen\Yii2Algolia\AlgoliaManager` to control them. Note that all helpers are not available for use other than with ActiveRecord classes.
+
 ###Indexing
 
 ####Manual Indexing
-You can trigger indexing using the `index()` instance method.
+You can trigger indexing using the `index()` instance method on an ActiveRecord model.
 
 ```php
 $contact = new Contact();
 $contact->name = 'test';
 $contact->index();
+```
+
+Or if you fancy service like architecture, you can use helper methods on `leinonen\Yii2Algolia\AlgoliaManager`:
+
+```php
+$contact = new Contact();
+$contact->name = 'test';
+$manager->pushToIndex($contact);
 ```
 
 ####Manual Removal
@@ -107,17 +117,22 @@ $contact = Contact::findOne(['name' => 'test');
 $contact->removeFromIndex();
 ```
 
+And with the service:
+```php
+$contact = Contact::findOne(['name' => 'test');
+$manager->removeFromIndex($contact);
+```
+
 ####Reindexing
 To safely reindex all your ActiveRecord models(index to a temporary index + move the temporary index to the current one, use the `reIndex()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 
 ```php
-$manager->reIndex(new Contact());
+$manager->reIndex(Contact::class);
 ```
-Note that the manager requires and actual instance of the ActiveRecord class
  
 ####Clearing Indices
-To clear indices where the class is synced use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+To clear indices where the ActiveRecord is synced to, use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 
 ```php
-$manager->clearIndices(new Contact());
+$manager->clearIndices(Contact::class);
 ```

@@ -2,6 +2,7 @@
 
 namespace leinonen\Yii2Algolia;
 
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -64,6 +65,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     protected function createManager()
     {
         $factory = new AlgoliaFactory();
+        $activeRecordFactory = new ActiveRecordFactory();
         $config = [
             'applicationId' => $this->applicationId,
             'apiKey' => $this->apiKey,
@@ -71,7 +73,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
             'options' => $this->options,
         ];
 
-        return new AlgoliaManager($factory, $config);
+        return new AlgoliaManager($factory, $activeRecordFactory, $config);
     }
 
     /**

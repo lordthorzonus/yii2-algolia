@@ -1,6 +1,6 @@
 <?php
 
-namespace leinonen\Yii2Algolia\ActiveRecord;
+namespace leinonen\Yii2Algolia;
 
 
 interface SearchableInterface
@@ -14,8 +14,17 @@ interface SearchableInterface
 
     /**
      * Returns the model in algolia friendly array form.
+     * Must return an key called objectID for identifying with Algolia
      *
      * @return array
      */
     public function getAlgoliaRecord();
+
+    /**
+     * Returns an unique identifier for the Model.
+     *
+     * @return int
+     */
+    public function getObjectID();
+
 }

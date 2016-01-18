@@ -4,7 +4,7 @@ namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
-use leinonen\Yii2Algolia\ActiveRecord\SearchableInterface;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
 /**
  * @method setConnectTimeout($connectTimeout, $timeout = 30, $searchTimeout = 5)
@@ -47,15 +47,22 @@ class AlgoliaManager
     protected $client;
 
     /**
+     * @var ActiveRecordFactory
+     */
+    protected $activeRecordFactory;
+
+    /**
      * Initiates a new AlgoliaManager.
      *
-     * @param AlgoliaFactory $factory
+     * @param AlgoliaFactory $algoliaFactory
+     * @param ActiveRecordFactory $activeRecordFactory
      * @param array $config Configurations for the Algolia Client.
      */
-    public function __construct(AlgoliaFactory $factory, array $config = [])
+    public function __construct(AlgoliaFactory $algoliaFactory, ActiveRecordFactory $activeRecordFactory, array $config = [])
     {
-        $this->factory = $factory;
+        $this->factory = $algoliaFactory;
         $this->config = $config;
+        $this->activeRecordFactory = $activeRecordFactory;
     }
 
     /**
@@ -83,13 +90,51 @@ class AlgoliaManager
     }
 
     /**
-     * Re-indexes the indices safely for the given ActiveRecord Class.
-     * @param SearchableInterface $activeRecord
+     * Indexes a searchable model.
+     *
+     * @param SearchableInterface $searchableModel
      */
-    public function reIndex(SearchableInterface $activeRecord)
+    public function pushToIndex(SearchableInterface $searchableModel)
     {
+        $indices = $searchableModel->getIndices();
+
+        foreach($indices as $index){
+            $record = $searchableModel->getAlgoliaRecord();
+            $this->initIndex($index)->addObject($record);
+        }
+    }
+
+    /**
+     * Removes a searchable model from indices.
+     *
+     * @param SearchableInterface $searchableModel
+     *
+     * @throws \Exception
+     */
+    public function removeFromIndex(SearchableInterface $searchableModel)
+    {
+        $indices = $searchableModel->getIndices();
+
+        foreach($indices as $index){
+            $objectID = $searchableModel->getObjectID();
+            $this->initIndex($index)->deleteObject($objectID);
+        }
+    }
+
+    /**
+     * Re-indexes the indices safely for the given ActiveRecord Class.
+     *
+     * @param string $className The name of the ActiveRecord to be indexed.
+     */
+    public function reIndex($className)
+    {
+        $this->checkImplementsSearchableInterface($className);
+        $activeRecord = $this->activeRecordFactory->make($className);
+
         /** @var SearchableInterface[] $models */
         $models = $activeRecord->find()->all();
+
+        /** @var SearchableInterface $activeRecord */
         $indices = $activeRecord->getIndices();
         $records = [];
 
@@ -109,21 +154,26 @@ class AlgoliaManager
     }
 
     /**
-     * Clears the indices for the given ActiveRecord Class.
-     * @param SearchableInterface $activeRecord
+     * Clears the indices for the given Class that implements SearchableInterface.
+     *
+     * @param string $className The name of the Class which indices are to be cleared.
      */
-    public function clearIndices(SearchableInterface $activeRecord)
+    public function clearIndices($className)
     {
+        $this->checkImplementsSearchableInterface($className);
+        $activeRecord = $this->activeRecordFactory->make($className);
+
+        /** @var SearchableInterface $activeRecord */
         $indices = $activeRecord->getIndices();
 
-        foreach ($indices as $index) {
-            $index->clearIndex();
+        foreach ($indices as $index){
+            $this->initIndex($index)->clearIndex();
         }
     }
 
     /**
      * Dynamically pass methods to the Algolia Client.
-     *
+
      * @param string $method
      * @param array  $parameters
      *
@@ -132,5 +182,17 @@ class AlgoliaManager
     public function __call($method, $parameters)
     {
         return call_user_func_array([$this->getClient(), $method], $parameters);
+    }
+
+    /**
+     * Checks if the given class implements SearchableInterface
+     *
+     * @param string $className The class name to be checked.
+     */
+    private function checkImplementsSearchableInterface($className)
+    {
+        if(! (new \ReflectionClass($className))->implementsInterface(SearchableInterface::class)){
+            throw new \InvalidArgumentException("The class: {$className} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
+        }
     }
 }

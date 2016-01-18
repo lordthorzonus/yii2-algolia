@@ -47,9 +47,19 @@ trait Searchable
     public function getAlgoliaRecord()
     {
         $record = $this->toArray();
-        $record['objectID'] = $this->getPrimaryKey();
+        $record['objectID'] = $this->getObjectID();
 
         return $record;
+    }
+
+    /**
+     * Returns an unique identifier for the Model.
+     *
+     * @return int
+     */
+    public function getObjectID()
+    {
+        return $this->getPrimaryKey();
     }
 
     /**
@@ -78,7 +88,7 @@ trait Searchable
 
         foreach ($indices as $index) {
             $index = $manager->initIndex($index);
-            $index->deleteObject($this->getPrimaryKey());
+            $index->deleteObject($this->getObjectID());
         }
     }
 

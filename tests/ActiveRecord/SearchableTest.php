@@ -5,7 +5,7 @@ namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\Tests\helpers\DummyModel;
+use leinonen\Yii2Algolia\Tests\helpers\DummyActiveRecordModel;
 use Yii;
 use yiiunit\TestCase;
 use Mockery as m;
@@ -48,14 +48,14 @@ class SearchableTest extends TestCase
     /** @test */
     public function it_can_return_indices_for_the_model()
     {
-        $testModel = new DummyModel();
-        $this->assertEquals(['DummyModel'], $testModel->getIndices());
+        $testModel = new DummyActiveRecordModel();
+        $this->assertEquals(['DummyActiveRecordModel'], $testModel->getIndices());
     }
 
     /** @test */
     public function if_the_indices_are_specified_they_take_precedence()
     {
-        $testModel = m::mock(DummyModel::class)->makePartial();
+        $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
         $testModel->shouldReceive('indices')->andReturn(['firstIndice', 'secondIndice']);
 
         $this->assertEquals(['firstIndice', 'secondIndice'], $testModel->getIndices());
@@ -64,7 +64,7 @@ class SearchableTest extends TestCase
     /** @test */
     public function it_can_be_converted_to_algolia_record()
     {
-        $testModel = m::mock(DummyModel::class)->makePartial();
+        $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
         $testModel->shouldReceive('toArray')->andReturn(['property1' => 'test']);
         $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
 
@@ -74,29 +74,31 @@ class SearchableTest extends TestCase
     /** @test */
     public function it_can_be_pushed_to_indices()
     {
-        $testModel = m::mock(DummyModel::class)->makePartial();
-        $testModel->shouldReceive('toArray')->andReturn(['property1' => 'test']);
-        $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
-        $testModel->shouldReceive('getIndices')->andReturn(['DummyModel']);
+        $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
+        $className = 'DummyActiveRecordModel';
+
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['objectID' => 1, 'property1' => 'test']);
+        $testModel->shouldReceive('getIndices')->andReturn([$className]);
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->shouldReceive('addObject')->once()->with(['objectID' => 1, 'property1' => 'test']);
 
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with('DummyModel')->andReturn($mockIndex);
+        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with($className)->andReturn($mockIndex);
+
         $testModel->index();
     }
 
     /** @test */
     public function it_can_be_removed_from_indices()
     {
-        $testModel = m::mock(DummyModel::class)->makePartial();
+        $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
         $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
-        $testModel->shouldReceive('getIndices')->andReturn(['DummyModel']);
+        $testModel->shouldReceive('getIndices')->andReturn(['DummyActiveRecordModel']);
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->shouldReceive('deleteObject')->once()->with(1);
 
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with('DummyModel')->andReturn($mockIndex);
+        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with('DummyActiveRecordModel')->andReturn($mockIndex);
         $testModel->removeFromIndex();
     }
 }
