@@ -131,15 +131,15 @@ class AlgoliaManager
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);
 
-        /** @var SearchableInterface[] $models */
-        $models = $activeRecord->find()->all();
+        /** @var SearchableInterface[] $activeRecordEntities */
+        $activeRecordEntities = $activeRecord->find()->all();
 
         /* @var SearchableInterface $activeRecord */
         $indices = $activeRecord->getIndices();
         $records = [];
 
-        foreach ($models as $model) {
-            $records[] = $model->getAlgoliaRecord();
+        foreach ($activeRecordEntities as $activeRecordEntity) {
+            $records[] = $activeRecordEntity->getAlgoliaRecord();
         }
 
         foreach ($indices as $index) {
@@ -187,12 +187,14 @@ class AlgoliaManager
     /**
      * Checks if the given class implements SearchableInterface.
      *
-     * @param string $className The class name to be checked.
+     * @param mixed $class Either name or instance of the class to be checked.
      */
-    private function checkImplementsSearchableInterface($className)
+    private function checkImplementsSearchableInterface($class)
     {
-        if (! (new \ReflectionClass($className))->implementsInterface(SearchableInterface::class)) {
-            throw new \InvalidArgumentException("The class: {$className} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
+        $reflectionClass = new \ReflectionClass($class);
+
+        if (! $reflectionClass->implementsInterface(SearchableInterface::class)) {
+            throw new \InvalidArgumentException("The class: {$reflectionClass->getName()} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
         }
     }
 }
