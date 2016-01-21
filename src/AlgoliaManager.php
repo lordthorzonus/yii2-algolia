@@ -126,7 +126,7 @@ class AlgoliaManager
      *
      * @param string $className The name of the ActiveRecord to be indexed.
      */
-    public function reIndex($className)
+    public function reindex($className)
     {
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);

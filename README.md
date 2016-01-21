@@ -124,10 +124,10 @@ $manager->removeFromIndex($contact);
 ```
 
 ####Reindexing
-To safely reindex all your ActiveRecord models(index to a temporary index + move the temporary index to the current one), use the `reIndex()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+To safely reindex all your ActiveRecord models(index to a temporary index + move the temporary index to the current one), use the `leinonen\Yii2Algolia\AlgoliaManager::reindex()` method:
 
 ```php
-$manager->reIndex(Contact::class);
+$manager->reindex(Contact::class);
 ```
  
 ####Clearing Indices

@@ -66,7 +66,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
 
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
-        $manager->reIndex(DummyActiveRecordModel::class);
+        $manager->reindex(DummyActiveRecordModel::class);
     }
 
     /**
@@ -80,7 +80,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
 
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
-        $manager->reIndex(NotSearchableDummyModel::class);
+        $manager->reindex(NotSearchableDummyModel::class);
     }
 
     /** @test */
