@@ -41,15 +41,23 @@ use leinonen\Yii2Algolia\AlgoliaManager;
 
 class MyController
 {
-    public function actionExample(AlgoliaManager $manager)
+
+    private $algoliaManager;
+
+    public function __construct($id, $module, AlgoliaManager $algoliaManager, $config = [])
     {
-        $index = $manager->initIndex("contacts");
+        $this->algoliaManager = $algoliaManager;
+        parent::__construct($id, $module, $config);
+    }
+
+    public function actionExample()
+    {
+        $index = $this->algoliaManager->initIndex("contacts");
         $results = $index->search("query string");
     }
 }
 
 ```
-
 You can also access the manager like a Yii component.
 
 ```php
