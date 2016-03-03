@@ -193,8 +193,10 @@ You can also explicitly turn off events for insert, update or delete with props 
 public function behaviors()
 {
     return [
-        'class' => SynchronousAutoIndexBehavior::class,
-        'afterInsert' => false,
+        [
+            'class' => SynchronousAutoIndexBehavior::class,
+            'afterInsert' => false,
+        ],
     ];
 }
 ```
