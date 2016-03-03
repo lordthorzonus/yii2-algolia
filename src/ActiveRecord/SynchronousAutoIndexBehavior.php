@@ -5,6 +5,7 @@ namespace leinonen\Yii2Algolia\ActiveRecord;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use Yii;
 use yii\base\Behavior;
+use yii\base\Event;
 use yii\db\ActiveRecord;
 
 class SynchronousAutoIndexBehavior extends Behavior
@@ -36,21 +37,21 @@ class SynchronousAutoIndexBehavior extends Behavior
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_INSERT => function ($event) {
+            ActiveRecord::EVENT_AFTER_INSERT => function (Event $event) {
                 if ($this->afterInsert) {
                     /** @var $manager AlgoliaManager */
                     $manager = Yii::$container->get(AlgoliaManager::class);
                     $manager->pushToIndices($event->sender);
                 }
             },
-            ActiveRecord::EVENT_AFTER_DELETE => function ($event) {
+            ActiveRecord::EVENT_AFTER_DELETE => function (Event $event) {
                 if ($this->afterDelete) {
                     /** @var $manager AlgoliaManager */
                     $manager = Yii::$container->get(AlgoliaManager::class);
                     $manager->removeFromIndices($event->sender);
                 }
             },
-            ActiveRecord::EVENT_AFTER_UPDATE => function ($event) {
+            ActiveRecord::EVENT_AFTER_UPDATE => function (Event $event) {
                 if ($this->afterUpdate) {
                     /** @var $manager AlgoliaManager */
                     $manager = Yii::$container->get(AlgoliaManager::class);
