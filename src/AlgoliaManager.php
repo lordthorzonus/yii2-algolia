@@ -155,7 +155,7 @@ class AlgoliaManager
         $records = [];
 
         foreach ($activeRecordEntities as $activeRecordEntity) {
-            $record =  $activeRecordEntity->getAlgoliaRecord();
+            $record = $activeRecordEntity->getAlgoliaRecord();
             $record['objectID'] = $activeRecordEntity->getObjectID();
             $records[] = $record;
         }
@@ -191,7 +191,7 @@ class AlgoliaManager
 
     /**
      * Dynamically pass methods to the Algolia Client.
-     
+
      * @param string $method
      * @param array  $parameters
      *
