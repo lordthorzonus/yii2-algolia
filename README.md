@@ -101,7 +101,7 @@ You can also also implement the `leinonen\Yii2Algolia\SearchableInterface` for p
 ###Indexing
 
 ####Manual Indexing
-You can trigger indexing using the `index()` instance method on an ActiveRecord model.
+You can trigger indexing using the `index()` instance method on an ActiveRecord model with the help of `leinonen\Yii2Algolia\Searchable` trait.
 
 ```php
 $contact = new Contact();
@@ -109,26 +109,40 @@ $contact->name = 'test';
 $contact->index();
 ```
 
-Or if you fancy a service like architecture, you can use helper methods on `leinonen\Yii2Algolia\AlgoliaManager`:
+Or if you fancy a more service like architecture, you can use the methods on `leinonen\Yii2Algolia\AlgoliaManager`:
 
 ```php
 $contact = new Contact();
 $contact->name = 'test';
-$manager->pushToIndex($contact);
+$manager->pushToIndices($contact);
 ```
 
 ####Manual Removal
-And trigger the removing using the `removeFromIndex()` instance method.
+Removing is triggered using the `removeFromIndices()` instance method.
 
 ```php
 $contact = Contact::findOne(['name' => 'test');
-$contact->removeFromIndex();
+$contact->removeFromIndices();
 ```
 
-And with the service:
+Or with the service:
 ```php
 $contact = Contact::findOne(['name' => 'test');
-$manager->removeFromIndex($contact);
+$manager->removeFromIndices($contact);
+```
+
+####Manual Updating
+Update is triggered using the `updateInIndices()` instance method.
+
+```php
+$contact = Contact::findOne(['name' => 'test');
+$contact->updateInIndices();
+```
+
+Or with the service:
+```php
+$contact = Contact::findOne(['name' => 'test');
+$manager->updateInIndices($contact);
 ```
 
 ####Reindexing
@@ -143,4 +157,43 @@ To clear indices where the ActiveRecord is synced to, use the `clearIndices()` m
 
 ```php
 $manager->clearIndices(Contact::class);
+```
+
+###Auto-indexing
+Another solution is to attach the `leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior` behavior to the ActiveRecord model. This behavior will then trigger automatically when the model is created, updated or deleted. The model needs of course to implement the `leinonen\Yii2Algolia\SearchableInterface` via the mentioned trait or your custom methods.
+**Beware that the Algolia API will be called every time then separately when something happens to the specified ActiveRecord model. This can cause performance issues.** At moment Yii2 doesn't provide queues out of the box, so asynchronous updating isn't possible.
+
+####Configuration
+```php
+use leinonen\Yii2Algolia\ActiveRecord\Searchable;
+use leinonen\Yii2Algolia\SearchableInterface;
+use leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior;
+use yii\db\ActiveRecord;
+
+class Contact extends ActiveRecord implements SearchableInterface
+{
+    use Searchable;
+    
+    /**
+    * {@inheritdoc}
+    */
+    public function behaviors()
+    {
+        return [
+            SynchronousAutoIndexBehavior::class,
+        ];
+    }
+}
+```
+
+You can also explicitly turn off events for insert, update or delete with props `afterInsert`, `afterUpdate`, `afterDelete`:
+
+```php
+public function behaviors()
+{
+    return [
+        'class' => SynchronousAutoIndexBehavior::class,
+        'afterInsert' => false,
+    ];
+}
 ```

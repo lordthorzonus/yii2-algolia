@@ -47,7 +47,8 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     {
         $testModel = m::mock(DummyActiveRecordModel::class);
         $testModel->shouldReceive('getIndices')->andReturn(['test']);
-        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['objectID' => 1]);
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel->shouldReceive('getObjectID')->andReturn(1);
 
         $mockActiveQuery = m::mock(ActiveQuery::class);
         $mockActiveQuery->shouldReceive('all')->andReturn([$testModel]);
@@ -56,7 +57,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $mockTemporaryIndex = m::mock(Index::class);
         $mockTemporaryIndex->indexName = 'tmp_test';
-        $mockTemporaryIndex->shouldReceive('addObjects')->with([['objectID' => 1]]);
+        $mockTemporaryIndex->shouldReceive('addObjects')->with([['property1' => 'test', 'objectID' => 1]]);
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_test')->andReturn($mockTemporaryIndex);
@@ -120,11 +121,12 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     public function it_can_index_an_object_that_implements_searchable_interface()
     {
         $dummyModel = m::mock(DummyActiveRecordModel::class);
-        $dummyModel->shouldReceive('getAlgoliaRecord')->andReturn(['objectID' => 1, 'property1' => 'test']);
+        $dummyModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $dummyModel->shouldReceive('getObjectID')->andReturn(1);
         $dummyModel->shouldReceive('getIndices')->andReturn(['dummyIndex']);
 
         $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('addObject')->once()->with(['objectID' => 1, 'property1' => 'test']);
+        $mockIndex->shouldReceive('addObject')->once()->withArgs([['property1' => 'test'], 1]);
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('dummyIndex')->andReturn($mockIndex);
@@ -132,7 +134,27 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
 
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
-        $manager->pushToIndex($dummyModel);
+        $manager->pushToIndices($dummyModel);
+    }
+
+    /** @test */
+    public function it_can_update_an_object_that_implements_searchable_interface_in_all_indices_()
+    {
+        $dummyModel = m::mock(DummyActiveRecordModel::class);
+        $dummyModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $dummyModel->shouldReceive('getObjectID')->andReturn(1);
+        $dummyModel->shouldReceive('getIndices')->andReturn(['dummyIndex']);
+
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->shouldReceive('saveObject')->once()->with(['property1' => 'test', 'objectID' => 1]);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('dummyIndex')->andReturn($mockIndex);
+
+        $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
+
+        $manager->updateInIndices($dummyModel);
     }
 
     /** @test */
@@ -152,7 +174,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
 
-        $manager->removeFromIndex($dummyModel);
+        $manager->removeFromIndices($dummyModel);
     }
 
     /**

@@ -90,17 +90,33 @@ class AlgoliaManager
     }
 
     /**
-     * Indexes a searchable model.
+     * Indexes a searchable model to all indices.
      *
      * @param SearchableInterface $searchableModel
      */
-    public function pushToIndex(SearchableInterface $searchableModel)
+    public function pushToIndices(SearchableInterface $searchableModel)
     {
         $indices = $searchableModel->getIndices();
 
         foreach ($indices as $index) {
             $record = $searchableModel->getAlgoliaRecord();
-            $this->initIndex($index)->addObject($record);
+            $this->initIndex($index)->addObject($record, $searchableModel->getObjectID());
+        }
+    }
+
+    /**
+     * Updates the models data in all indices.
+     *
+     * @param SearchableInterface $searchableModel
+     */
+    public function updateInIndices(SearchableInterface $searchableModel)
+    {
+        $indices = $searchableModel->getIndices();
+
+        foreach ($indices as $index) {
+            $record = $searchableModel->getAlgoliaRecord();
+            $record['objectID'] = $searchableModel->getObjectID();
+            $this->initIndex($index)->saveObject($record);
         }
     }
 
@@ -111,7 +127,7 @@ class AlgoliaManager
      *
      * @throws \Exception
      */
-    public function removeFromIndex(SearchableInterface $searchableModel)
+    public function removeFromIndices(SearchableInterface $searchableModel)
     {
         $indices = $searchableModel->getIndices();
 
@@ -139,7 +155,9 @@ class AlgoliaManager
         $records = [];
 
         foreach ($activeRecordEntities as $activeRecordEntity) {
-            $records[] = $activeRecordEntity->getAlgoliaRecord();
+            $record =  $activeRecordEntity->getAlgoliaRecord();
+            $record['objectID'] = $activeRecordEntity->getObjectID();
+            $records[] = $record;
         }
 
         foreach ($indices as $index) {

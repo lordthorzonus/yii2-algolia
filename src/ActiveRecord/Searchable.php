@@ -47,7 +47,6 @@ trait Searchable
     public function getAlgoliaRecord()
     {
         $record = $this->toArray();
-        $record['objectID'] = $this->getObjectID();
 
         return $record;
     }
@@ -72,7 +71,7 @@ trait Searchable
 
         foreach ($indices as $index) {
             $index = $manager->initIndex($index);
-            $index->addObject($this->getAlgoliaRecord());
+            $index->addObject($this->getAlgoliaRecord(), $this->getObjectID());
         }
     }
 
@@ -81,7 +80,7 @@ trait Searchable
      *
      * @throws \Exception
      */
-    public function removeFromIndex()
+    public function removeFromIndices()
     {
         $manager = $this->getAlgoliaManager();
         $indices = $this->getIndices();
@@ -89,6 +88,22 @@ trait Searchable
         foreach ($indices as $index) {
             $index = $manager->initIndex($index);
             $index->deleteObject($this->getObjectID());
+        }
+    }
+
+    /**
+     *
+     */
+    public function updateInIndices()
+    {
+        $manager = $this->getAlgoliaManager();
+        $indices = $this->getIndices();
+
+        foreach ($indices as $index) {
+            $index = $manager->initIndex($index);
+            $record = $this->getAlgoliaRecord();
+            $record['objectID'] = $this->getObjectID();
+            $index->saveObject($record);
         }
     }
 

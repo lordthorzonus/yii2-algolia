@@ -12,8 +12,7 @@ interface SearchableInterface
     public function getIndices();
 
     /**
-     * Returns the model in algolia friendly array form.
-     * Must return an key called objectID for identifying with Algolia.
+     * Returns the model in an Algolia friendly array form.
      *
      * @return array
      */
