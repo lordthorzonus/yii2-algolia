@@ -91,6 +91,9 @@ trait Searchable
         }
     }
 
+    /**
+     * Updates the model in Algolia.
+     */
     public function updateInIndices()
     {
         $manager = $this->getAlgoliaManager();
