@@ -1,6 +1,5 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
 
 use leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior;
@@ -46,7 +45,7 @@ class SynchronousAutoIndexBehaviorTest extends TestCase
         parent::tearDown();
         m::close();
     }
-    
+
     /** @test */
     public function it_should_call_push_to_indices_method_from_algolia_manager_when_the_owner_is_saved()
     {
@@ -64,6 +63,7 @@ class SynchronousAutoIndexBehaviorTest extends TestCase
 
         $dummyModel->trigger(ActiveRecord::EVENT_AFTER_DELETE);
     }
+
     /** @test */
     public function it_should_call_update_in_indices_method_from_algolia_manager_when_the_owner_updated()
     {

@@ -91,9 +91,6 @@ trait Searchable
         }
     }
 
-    /**
-     *
-     */
     public function updateInIndices()
     {
         $manager = $this->getAlgoliaManager();
