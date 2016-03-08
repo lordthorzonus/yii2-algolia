@@ -11,7 +11,7 @@ build:
         override:
             -
                 command: 'phpunit --coverage-clover=coverage.clover'
-                    coverage:
+                coverage:
                     file: 'coverage.clover'
                     format: 'php-clover'
 filter:
