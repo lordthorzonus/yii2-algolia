@@ -13,12 +13,12 @@ trait Searchable
     /**
      * @see \yii\base\ArrayableTrait::toArray()
      */
-    abstract public function toArray();
+    abstract public function toArray(array $fields = [], array $expand = [], $recursive = true);
 
     /**
      * @see \yii\db\BaseActiveRecord::getPrimaryKey()
      */
-    abstract public function getPrimaryKey();
+    abstract public function getPrimaryKey($asArray = false);
 
     /**
      * An array of indices that this model uses. If none specified
