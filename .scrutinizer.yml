@@ -26,6 +26,9 @@ checks:
         parameter_doc_comments: true
         param_doc_comment_if_not_inferrable: true
         security_vulnerabilities: false
+tools:
+     php_sim: false
+     php_cpd: false
 coding_style:
     php:
         spaces:
