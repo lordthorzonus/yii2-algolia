@@ -205,7 +205,7 @@ class AlgoliaManager
     /**
      * Checks if the given class implements SearchableInterface.
      *
-     * @param mixed $class Either name or instance of the class to be checked.
+     * @param string $class Either name or instance of the class to be checked.
      */
     private function checkImplementsSearchableInterface($class)
     {
