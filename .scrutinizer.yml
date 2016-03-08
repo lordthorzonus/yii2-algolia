@@ -24,7 +24,7 @@ before_commands:
 checks:
     php:
         code_rating: true
-        duplication: true
+        duplication: false
         uppercase_constants: true
         simplify_boolean_return: true
         return_doc_comments: true
