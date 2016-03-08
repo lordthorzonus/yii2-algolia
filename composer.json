@@ -12,8 +12,7 @@
     ],
     "require": {
         "yiisoft/yii2": "^2.0",
-        "algolia/algoliasearch-client-php": "^1.6",
-        "fxp/composer-asset-plugin": "~1.1"
+        "algolia/algoliasearch-client-php": "^1.6"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",

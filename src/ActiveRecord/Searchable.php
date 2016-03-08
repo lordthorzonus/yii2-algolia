@@ -11,6 +11,16 @@ use Yii;
 trait Searchable
 {
     /**
+     * @see \yii\base\ArrayableTrait::toArray()
+     */
+    abstract public function toArray();
+
+    /**
+     * @see \yii\db\BaseActiveRecord::getPrimaryKey()
+     */
+    abstract public function getPrimaryKey();
+
+    /**
      * An array of indices that this model uses. If none specified
      * The name of the model will be used as the index.
      *
