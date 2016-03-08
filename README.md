@@ -164,7 +164,7 @@ $manager->clearIndices(Contact::class);
 ###Auto-indexing
 Another solution is to attach the `leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior` behavior to the ActiveRecord model. This behavior will then trigger automatically when the model is created, updated or deleted. The model needs of course to implement the `leinonen\Yii2Algolia\SearchableInterface` via the mentioned trait or your custom methods.
 
-**Beware that the Algolia API will be called every time then separately when something happens to the specified ActiveRecord model. This can cause performance issues.** At moment Yii2 doesn't provide queues out of the box, so asynchronous updating isn't possible.
+**Beware that the Algolia API will be called every time separately when something happens to the specified ActiveRecord model. This can cause performance issues.** At the moment Yii2 doesn't provide queues out of the box, so asynchronous updating isn't available.
 
 ####Configuration
 ```php
@@ -198,6 +198,7 @@ public function behaviors()
         [
             'class' => SynchronousAutoIndexBehavior::class,
             'afterInsert' => false,
+            'afterUpdate' => false,
         ],
     ];
 }

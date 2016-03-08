@@ -3,30 +3,37 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
+use AlgoliaSearch\ClientContext;
 use AlgoliaSearch\Index;
+use AlgoliaSearch\PlacesIndex;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
 /**
- * @method setConnectTimeout($connectTimeout, $timeout = 30, $searchTimeout = 5)
- * @method enableRateLimitForward($adminAPIKey, $endUserIP, $rateLimitAPIKey)
+ * @method setConnectTimeout(int $connectTimeout, int $timeout = 30, int $searchTimeout = 5)
+ * @method enableRateLimitForward(string $adminAPIKey, string $endUserIP, string $rateLimitAPIKey)
+ * @method setForwarderFor(string $ip)
+ * @method setAlgoliaUserToken(string $token)
  * @method disableRateLimitForward()
  * @method isAlive()
- * @method setExtraHeader($key, $value)
- * @method multipleQueries($queries, $indexNameKey = "indexName", $strategy = "none")
- * @method listIndexes()
- * @method deleteIndex($indexName)
- * @method moveIndex($srcIndexName, $dstIndexName)
- * @method copyIndex($srcIndexName, $dstIndexName)
- * @method getLogs($offset = 0, $length = 10, $type = "all")
- * @method Index initIndex($indexName)
- * @method listUserKeys()
- * @method getUserKeyACL($key)
- * @method deleteUserKey($key)
- * @method addUserKey($obj, $validity = 0, $maxQueriesPerIPPerHour = 0, $maxHitsPerQuery = 0, $indexes = null)
- * @method batch($requests)
- * @method generateSecuredApiKey($privateApiKey, $query, $userToken = null)
- * @method request($context, $method, $path, $params = array(), $data = array(), $hostsArray, $connectTimeout, $readTimeout)
- * @method doRequest($context, $method, $host, $path, $params, $data, $connectTimeout, $readTimeout)
+ * @method setExtraHeader(string $key, string $value)
+ * @method mixed multipleQueries(array $queries, string $indexNameKey = "indexName", string $strategy = "none")
+ * @method mixed listIndexes()
+ * @method deleteIndex(string $indexName)
+ * @method mixed moveIndex(string $srcIndexName, string $dstIndexName)
+ * @method mixed copyIndex(string $srcIndexName, string $dstIndexName)
+ * @method mixed getLogs(int $offset = 0, int $length = 10, string $type = "all")
+ * @method Index initIndex(string $indexName)
+ * @method mixed listUserKeys()
+ * @method mixed getUserKeyACL(string $key)
+ * @method mixed deleteUserKey(string $key)
+ * @method mixed addUserKey(array $obj, int $validity = 0, int $maxQueriesPerIPPerHour = 0, int $maxHitsPerQuery = 0, array $indexes = null)
+ * @method mixed updateUserKey(string $key, array $obj, int $validity = 0, int $maxQueriesPerIPPerHour = 0, int $maxHitsPerQuery = 0, array $indexes = null)
+ * @method mixed batch(array $requests)
+ * @method string generateSecuredApiKey(string $privateApiKey, mixed $query, string $userToken = null)
+ * @method string buildQuery(array $args)
+ * @method mixed request(ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method mixed doRequest(ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
  * @see Client
  */
 class AlgoliaManager
