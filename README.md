@@ -4,6 +4,8 @@
 [![Total Downloads](https://poser.pugx.org/leinonen/yii2-algolia/downloads)](https://packagist.org/packages/leinonen/yii2-algolia)
 [![License](https://poser.pugx.org/leinonen/yii2-algolia/license)](https://packagist.org/packages/leinonen/yii2-algolia)
 [![Build Status](https://travis-ci.org/lordthorzonus/yii2-algolia.svg)](https://travis-ci.org/lordthorzonus/yii2-algolia)
+[![Code Coverage](https://scrutinizer-ci.com/g/lordthorzonus/yii2-algolia/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/lordthorzonus/yii2-algolia/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lordthorzonus/yii2-algolia/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lordthorzonus/yii2-algolia/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/0580d302-f028-45dc-8968-016b8aec786a/mini.png)](https://insight.sensiolabs.com/projects/0580d302-f028-45dc-8968-016b8aec786a)
 
 
