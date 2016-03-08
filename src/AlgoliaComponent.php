@@ -43,7 +43,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     public function bootstrap($app)
     {
         Yii::$container->set(AlgoliaManager::class, function () {
-             return $this->createManager();
+            return $this->createManager();
         });
     }
 
@@ -80,7 +80,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      * Dynamically pass methods to the AlgoliaManager.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */

@@ -212,7 +212,7 @@ class AlgoliaManager
         $reflectionClass = new \ReflectionClass($class);
 
         if (! $reflectionClass->implementsInterface(SearchableInterface::class)) {
-            throw new \InvalidArgumentException("The class: {$reflectionClass->getName()} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
+            throw new \InvalidArgumentException("The class: {$reflectionClass->name} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
         }
     }
 }
