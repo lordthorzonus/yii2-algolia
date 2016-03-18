@@ -39,8 +39,8 @@ use yii\base\Component;
  * @method mixed batch(array $requests)
  * @method string generateSecuredApiKey(string $privateApiKey, mixed $query, string $userToken = null)
  * @method string buildQuery(array $args)
- * @method mixed request(\AlgoliaSearch\Client $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
- * @method mixed doRequest(\AlgoliaSearch\Client $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method mixed request(Client $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method mixed doRequest(Client $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
  * @method \AlgoliaSearch\PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
  * @see Client
  * @see AlgoliaManager
