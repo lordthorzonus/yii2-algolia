@@ -3,9 +3,6 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
-use AlgoliaSearch\ClientContext;
-use AlgoliaSearch\Index;
-use AlgoliaSearch\PlacesIndex;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use yii\base\Application;
@@ -33,7 +30,7 @@ use yii\base\Component;
  * @method mixed moveIndex(string $srcIndexName, string $dstIndexName)
  * @method mixed copyIndex(string $srcIndexName, string $dstIndexName)
  * @method mixed getLogs(int $offset = 0, int $length = 10, string $type = "all")
- * @method Index initIndex(string $indexName)
+ * @method \AlgoliaSearch\Index initIndex(string $indexName)
  * @method mixed listUserKeys()
  * @method mixed getUserKeyACL(string $key)
  * @method mixed deleteUserKey(string $key)
@@ -42,9 +39,9 @@ use yii\base\Component;
  * @method mixed batch(array $requests)
  * @method string generateSecuredApiKey(string $privateApiKey, mixed $query, string $userToken = null)
  * @method string buildQuery(array $args)
- * @method mixed request(ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
- * @method mixed doRequest(ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
- * @method PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
+ * @method mixed request(\AlgoliaSearch\Client $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method mixed doRequest(\AlgoliaSearch\Client $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method \AlgoliaSearch\PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
  * @see Client
  * @see AlgoliaManager
  */

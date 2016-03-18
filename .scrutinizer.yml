@@ -56,3 +56,4 @@ coding_style:
         upper_lower_casing:
             constants:
                 true_false_null: lower
+                

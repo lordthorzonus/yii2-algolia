@@ -3,9 +3,7 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
-use AlgoliaSearch\ClientContext;
 use AlgoliaSearch\Index;
-use AlgoliaSearch\PlacesIndex;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
 /**
@@ -31,9 +29,9 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
  * @method mixed batch(array $requests)
  * @method string generateSecuredApiKey(string $privateApiKey, mixed $query, string $userToken = null)
  * @method string buildQuery(array $args)
- * @method mixed request(ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
- * @method mixed doRequest(ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
- * @method PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
+ * @method mixed request(\AlgoliaSearch\ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method mixed doRequest(\AlgoliaSearch\ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
+ * @method \AlgoliaSearch\PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
  * @see Client
  */
 class AlgoliaManager
@@ -198,9 +196,9 @@ class AlgoliaManager
 
     /**
      * Dynamically pass methods to the Algolia Client.
-
+     *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */
