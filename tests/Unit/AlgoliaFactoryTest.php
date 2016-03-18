@@ -1,6 +1,6 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests;
+namespace leinonen\Yii2Algolia\Tests\Unit;
 
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaFactory;

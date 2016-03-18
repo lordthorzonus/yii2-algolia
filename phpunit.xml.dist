@@ -5,9 +5,16 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          stopOnFailure="false">
+    <php>
+        <env name="ALGOLIA_ID" value="" />
+        <env name="ALGOLIA_KEY" value="" />
+    </php>
     <testsuites>
-        <testsuite name="phpDocumentor\Reflection\DocBlock">
-            <directory>./tests/</directory>
+        <testsuite name="unit">
+            <directory>./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory> ./tests/Integration</directory>
         </testsuite>
     </testsuites>
     <filter>

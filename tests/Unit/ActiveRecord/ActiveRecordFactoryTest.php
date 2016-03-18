@@ -1,10 +1,10 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
+namespace leinonen\Yii2Algolia\Tests\Unit\ActiveRecord;
 
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use leinonen\Yii2Algolia\AlgoliaFactory;
-use leinonen\Yii2Algolia\Tests\helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 
 class ActiveRecordFactoryTest extends \PHPUnit_Framework_TestCase
 {

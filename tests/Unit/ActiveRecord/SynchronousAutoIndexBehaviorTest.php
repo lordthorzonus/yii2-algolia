@@ -1,14 +1,14 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
+namespace leinonen\Yii2Algolia\Tests\Unit\ActiveRecord;
 
 use leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior;
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\Tests\helpers\DummyActiveRecordModel;
-use leinonen\Yii2Algolia\Tests\helpers\SynchronousAutoIndexedDummyModel;
-use Yii;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\SynchronousAutoIndexedDummyModel;
 use Mockery as m;
+use Yii;
 use yii\db\ActiveRecord;
 use yiiunit\TestCase;
 

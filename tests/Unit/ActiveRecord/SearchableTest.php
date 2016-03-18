@@ -1,14 +1,14 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests\ActiveRecord;
+namespace leinonen\Yii2Algolia\Tests\Unit\ActiveRecord;
 
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\Tests\helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use Mockery as m;
 use Yii;
 use yiiunit\TestCase;
-use Mockery as m;
 
 class SearchableTest extends TestCase
 {

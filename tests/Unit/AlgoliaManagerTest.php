@@ -1,14 +1,14 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests;
+namespace leinonen\Yii2Algolia\Tests\Unit;
 
 use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\Tests\helpers\DummyActiveRecordModel;
-use leinonen\Yii2Algolia\Tests\helpers\NotSearchableDummyModel;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 use Mockery as m;
 use yii\db\ActiveQuery;
 
@@ -73,7 +73,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
      */
     public function it_should_throw_an_error_if_non_searchable_class_was_given_to_reIndex()
     {
@@ -106,7 +106,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
      */
     public function it_should_throw_an_error_if_non_searchable_class_was_given_to_clearIndices()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests;
+namespace leinonen\Yii2Algolia\Tests\Unit;
 
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;

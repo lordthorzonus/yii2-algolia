@@ -1,6 +1,6 @@
 <?php
 
-namespace leinonen\Yii2Algolia\Tests\helpers;
+namespace leinonen\Yii2Algolia\Tests\Helpers;
 
 use leinonen\Yii2Algolia\ActiveRecord\Searchable;
 use leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior;
