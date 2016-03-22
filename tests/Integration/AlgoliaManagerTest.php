@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests\Integration;
-
 
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
@@ -113,5 +111,4 @@ class AlgoliaManagerTest extends TestCase
 
         return $searchableObject;
     }
-
 }
