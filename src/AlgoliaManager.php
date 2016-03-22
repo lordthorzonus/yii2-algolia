@@ -98,31 +98,41 @@ class AlgoliaManager
      * Indexes a searchable model to all indices.
      *
      * @param SearchableInterface $searchableModel
+     *
+     * @return array
      */
     public function pushToIndices(SearchableInterface $searchableModel)
     {
         $indices = $searchableModel->getIndices();
+        $response = [];
 
         foreach ($indices as $index) {
             $record = $searchableModel->getAlgoliaRecord();
-            $this->initIndex($index)->addObject($record, $searchableModel->getObjectID());
+            $response[$index] = $this->initIndex($index)->addObject($record, $searchableModel->getObjectID());
         }
+
+        return $response;
     }
 
     /**
      * Updates the models data in all indices.
      *
      * @param SearchableInterface $searchableModel
+     *
+     * @return array
      */
     public function updateInIndices(SearchableInterface $searchableModel)
     {
         $indices = $searchableModel->getIndices();
+        $response = [];
 
         foreach ($indices as $index) {
             $record = $searchableModel->getAlgoliaRecord();
             $record['objectID'] = $searchableModel->getObjectID();
-            $this->initIndex($index)->saveObject($record);
+            $response[$index] = $this->initIndex($index)->saveObject($record);
         }
+
+        return $response;
     }
 
     /**
@@ -130,27 +140,34 @@ class AlgoliaManager
      *
      * @param SearchableInterface $searchableModel
      *
+     * @return array
      * @throws \Exception
      */
     public function removeFromIndices(SearchableInterface $searchableModel)
     {
         $indices = $searchableModel->getIndices();
+        $response = [];
 
         foreach ($indices as $index) {
             $objectID = $searchableModel->getObjectID();
-            $this->initIndex($index)->deleteObject($objectID);
+            $response[$index] = $this->initIndex($index)->deleteObject($objectID);
         }
+
+        return $response;
     }
 
     /**
      * Re-indexes the indices safely for the given ActiveRecord Class.
      *
      * @param string $className The name of the ActiveRecord to be indexed.
+     *
+     * @return array
      */
     public function reindex($className)
     {
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);
+        $response = [];
 
         /** @var SearchableInterface[] $activeRecordEntities */
         $activeRecordEntities = $activeRecord->find()->all();
@@ -172,26 +189,33 @@ class AlgoliaManager
             $temporaryIndex = $this->initIndex($temporaryIndexName);
             $temporaryIndex->addObjects($records);
 
-            $this->moveIndex($temporaryIndexName, $index);
+            $response[$index] = $this->moveIndex($temporaryIndexName, $index);
         }
+
+        return $response;
     }
 
     /**
      * Clears the indices for the given Class that implements SearchableInterface.
      *
      * @param string $className The name of the Class which indices are to be cleared.
+     *
+     * @return array
      */
     public function clearIndices($className)
     {
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);
+        $response = [];
 
         /* @var SearchableInterface $activeRecord */
         $indices = $activeRecord->getIndices();
 
         foreach ($indices as $index) {
-            $this->initIndex($index)->clearIndex();
+            $response[$index] = $this->initIndex($index)->clearIndex();
         }
+
+        return $response;
     }
 
     /**
