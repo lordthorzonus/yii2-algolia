@@ -195,7 +195,7 @@ class AlgoliaManager
             // Temporary index overrides all the settings on the main one.
             // So let's set the original settings on the temporary one before atomically moving the index.
             $temporaryIndex->setSettings($settings);
-            
+
             $response[$indexName] = $this->moveIndex($temporaryIndexName, $indexName);
         }
 

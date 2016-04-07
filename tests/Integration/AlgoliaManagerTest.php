@@ -2,14 +2,12 @@
 
 namespace leinonen\Yii2Algolia\Tests\Integration;
 
-use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use leinonen\Yii2Algolia\SearchableInterface;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 use Yii;
 use Mockery as m;
-use yii\db\ActiveQueryInterface;
 use yiiunit\TestCase;
 
 class AlgoliaManagerTest extends TestCase
@@ -76,7 +74,7 @@ class AlgoliaManagerTest extends TestCase
         $pushResponse = $this->algoliaManager->pushToIndices($searchableObject);
 
         $index = $this->algoliaManager->initIndex($indexName);
-        $index->waitTask($pushResponse[ $indexName ]['taskID']);
+        $index->waitTask($pushResponse[$indexName]['taskID']);
 
         return $index;
     }
