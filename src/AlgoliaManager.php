@@ -182,14 +182,21 @@ class AlgoliaManager
             $records[] = $record;
         }
 
-        foreach ($indices as $index) {
-            $temporaryIndexName = 'tmp_' . $index;
+        foreach ($indices as $indexName) {
+            $temporaryIndexName = 'tmp_' . $indexName;
 
             /** @var Index $temporaryIndex */
             $temporaryIndex = $this->initIndex($temporaryIndexName);
             $temporaryIndex->addObjects($records);
 
-            $response[$index] = $this->moveIndex($temporaryIndexName, $index);
+            $originalIndex = $this->initIndex($indexName);
+            $settings = $originalIndex->getSettings();
+
+            // Temporary index overrides all the settings on the main one.
+            // So let's set the original settings on the temporary one before atomically moving the index.
+            $temporaryIndex->setSettings($settings);
+            
+            $response[$indexName] = $this->moveIndex($temporaryIndexName, $indexName);
         }
 
         return $response;

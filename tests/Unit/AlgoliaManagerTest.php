@@ -55,12 +55,18 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
 
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'test';
+        $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
+
         $mockTemporaryIndex = m::mock(Index::class);
         $mockTemporaryIndex->indexName = 'tmp_test';
         $mockTemporaryIndex->shouldReceive('addObjects')->with([['property1' => 'test', 'objectID' => 1]]);
+        $mockTemporaryIndex->shouldReceive('setSettings')->with(['setting1' => 'value1']);
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_test')->andReturn($mockTemporaryIndex);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
         $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_test', 'test']);
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
