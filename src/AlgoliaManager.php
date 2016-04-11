@@ -221,6 +221,7 @@ class AlgoliaManager
             $temporaryIndex->setSettings($settings);
 
             $response[$index->indexName] = $this->moveIndex($temporaryIndexName, $index->indexName);
+
         }
 
         return $response;
