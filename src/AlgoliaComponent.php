@@ -68,6 +68,11 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     public $options = [];
 
     /**
+     * @var null|string
+     */
+    public $env = null;
+
+    /**
      * @var AlgoliaManager
      */
     protected $manager;
@@ -110,7 +115,10 @@ class AlgoliaComponent extends Component implements BootstrapInterface
             'options' => $this->options,
         ];
 
-        return new AlgoliaManager($factory, $activeRecordFactory, $config);
+        $algoliaManager = new AlgoliaManager($factory, $activeRecordFactory, $config);
+        $algoliaManager->setEnv($this->env);
+
+        return $algoliaManager;
     }
 
     /**

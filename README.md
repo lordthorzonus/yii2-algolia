@@ -203,3 +203,21 @@ public function behaviors()
     ];
 }
 ```
+
+###Using multiple environments
+You can automatically prefix all the index names with the current App environment using the following configuration:
+
+```php
+use leinonen\Yii2Algolia\AlgoliaComponent;
+...
+'bootstrap' => ['algolia'],
+'components' => [
+    'algolia' => [
+        'class' => AlgoliaComponent::class,
+        'applicationId' => 'test',
+        'apiKey' => 'secret',
+        'env' => YII_ENV
+    ],
+],
+```
+Then when using any of the helpers methods from `leinonen\Yii2Algolia\AlgoliaManager` the environment will be prefixed to the index name. **Note if you use methods straight from [The Official Algolia Client](https://github.com/algolia/algoliasearch-client-php) the env config will have no effect.** 

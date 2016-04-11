@@ -57,6 +57,11 @@ class AlgoliaManager
     protected $activeRecordFactory;
 
     /**
+     * @var null|string
+     */
+    protected $env;
+
+    /**
      * Initiates a new AlgoliaManager.
      *
      * @param AlgoliaFactory $algoliaFactory
@@ -95,6 +100,26 @@ class AlgoliaManager
     }
 
     /**
+     * Sets the environment for the manager.
+     *
+     * @param string $env
+     */
+    public function setEnv($env)
+    {
+        $this->env = $env;
+    }
+
+    /**
+     * Returns the environment for the manager.
+     *
+     * @return null|string
+     */
+    public function getEnv()
+    {
+        return $this->env;
+    }
+
+    /**
      * Indexes a searchable model to all indices.
      *
      * @param SearchableInterface $searchableModel
@@ -103,12 +128,12 @@ class AlgoliaManager
      */
     public function pushToIndices(SearchableInterface $searchableModel)
     {
-        $indices = $searchableModel->getIndices();
+        $indices = $this->initIndices($searchableModel);
         $response = [];
 
         foreach ($indices as $index) {
             $record = $searchableModel->getAlgoliaRecord();
-            $response[$index] = $this->initIndex($index)->addObject($record, $searchableModel->getObjectID());
+            $response[$index->indexName] = $index->addObject($record, $searchableModel->getObjectID());
         }
 
         return $response;
@@ -123,13 +148,13 @@ class AlgoliaManager
      */
     public function updateInIndices(SearchableInterface $searchableModel)
     {
-        $indices = $searchableModel->getIndices();
+        $indices = $this->initIndices($searchableModel);
         $response = [];
 
         foreach ($indices as $index) {
             $record = $searchableModel->getAlgoliaRecord();
             $record['objectID'] = $searchableModel->getObjectID();
-            $response[$index] = $this->initIndex($index)->saveObject($record);
+            $response[$index->indexName] = $index->saveObject($record);
         }
 
         return $response;
@@ -145,12 +170,12 @@ class AlgoliaManager
      */
     public function removeFromIndices(SearchableInterface $searchableModel)
     {
-        $indices = $searchableModel->getIndices();
+        $indices = $indices = $this->initIndices($searchableModel);
         $response = [];
 
         foreach ($indices as $index) {
             $objectID = $searchableModel->getObjectID();
-            $response[$index] = $this->initIndex($index)->deleteObject($objectID);
+            $response[$index->indexName] = $index->deleteObject($objectID);
         }
 
         return $response;
@@ -173,7 +198,7 @@ class AlgoliaManager
         $activeRecordEntities = $activeRecord->find()->all();
 
         /* @var SearchableInterface $activeRecord */
-        $indices = $activeRecord->getIndices();
+        $indices = $indices = $this->initIndices($activeRecord);
         $records = [];
 
         foreach ($activeRecordEntities as $activeRecordEntity) {
@@ -182,21 +207,20 @@ class AlgoliaManager
             $records[] = $record;
         }
 
-        foreach ($indices as $indexName) {
-            $temporaryIndexName = 'tmp_' . $indexName;
+        foreach ($indices as $index) {
+            $temporaryIndexName = 'tmp_' . $index->indexName;
 
             /** @var Index $temporaryIndex */
             $temporaryIndex = $this->initIndex($temporaryIndexName);
             $temporaryIndex->addObjects($records);
 
-            $originalIndex = $this->initIndex($indexName);
-            $settings = $originalIndex->getSettings();
+            $settings = $index->getSettings();
 
             // Temporary index overrides all the settings on the main one.
             // So let's set the original settings on the temporary one before atomically moving the index.
             $temporaryIndex->setSettings($settings);
-            
-            $response[$indexName] = $this->moveIndex($temporaryIndexName, $indexName);
+
+            $response[$index->indexName] = $this->moveIndex($temporaryIndexName, $index->indexName);
         }
 
         return $response;
@@ -216,10 +240,10 @@ class AlgoliaManager
         $response = [];
 
         /* @var SearchableInterface $activeRecord */
-        $indices = $activeRecord->getIndices();
+        $indices = $indices = $this->initIndices($activeRecord);
 
         foreach ($indices as $index) {
-            $response[$index] = $this->initIndex($index)->clearIndex();
+            $response[$index->indexName] = $index->clearIndex();
         }
 
         return $response;
@@ -250,5 +274,29 @@ class AlgoliaManager
         if (! $reflectionClass->implementsInterface(SearchableInterface::class)) {
             throw new \InvalidArgumentException("The class: {$reflectionClass->name} doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
         }
+    }
+
+    /**
+     * Initializes indices for the given SearchableModel.
+     *
+     * @param SearchableInterface $searchableModel
+     *
+     * @return Index[]
+     */
+    private function initIndices(SearchableInterface $searchableModel)
+    {
+        $indexNames = $searchableModel->getIndices();
+
+        $indices = [];
+
+        foreach ($indexNames as $indexName) {
+            if($this->env !== null){
+                $indexName = $this->env . '_' . $indexName;
+            }
+
+            $indices[] = $this->initIndex($indexName);
+        }
+
+        return $indices;
     }
 }

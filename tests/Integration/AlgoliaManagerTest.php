@@ -63,6 +63,36 @@ class AlgoliaManagerTest extends TestCase
         $this->assertCount(1, $searchResult['hits']);
     }
 
+    /** @test */
+    public function it_uses_right_index_according_to_given_env()
+    {
+        // Clean up.
+        $this->destroyApplication();
+        $this->mockWebApplication([
+            'bootstrap' => ['algolia'],
+            'components' => [
+                'algolia' => [
+                    'class' => AlgoliaComponent::class,
+                    'applicationId' => getenv('ALGOLIA_ID'),
+                    'apiKey' => getenv('ALGOLIA_KEY'),
+                    'env' => 'test'
+                ],
+            ],
+        ]);
+
+        $algoliaManager =  Yii::$container->get(AlgoliaManager::class);
+
+        $searchableObject = $this->makeDummyActiveRecord();
+        $searchableObject->shouldReceive('getIndices')->andReturn(['index']);
+
+        $pushResponse = $algoliaManager->pushToIndices($searchableObject);
+
+
+        $this->assertArrayHasKey('test_index', $pushResponse);
+        $this->assertEquals('test', $algoliaManager->getEnv());
+        $this->deleteIndex($algoliaManager->initIndex('test_index'));
+    }
+
     /**
      * Creates one dummy object to a new index and asserts that it is successful.
      *

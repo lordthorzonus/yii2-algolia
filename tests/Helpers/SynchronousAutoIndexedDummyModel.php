@@ -18,3 +18,4 @@ class SynchronousAutoIndexedDummyModel extends ActiveRecord implements Searchabl
         ];
     }
 }
+    

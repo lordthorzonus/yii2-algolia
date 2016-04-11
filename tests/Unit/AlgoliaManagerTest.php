@@ -183,16 +183,79 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager->removeFromIndices($dummyModel);
     }
 
+    /** @test */
+    public function it_prefixes_the_indexes_with_the_given_environment_config_for_crud_operations()
+    {
+        $dummyModel = m::mock(DummyActiveRecordModel::class);
+        $dummyModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $dummyModel->shouldReceive('getObjectID')->andReturn(1);
+        $dummyModel->shouldReceive('getIndices')->andReturn(['dummyIndex']);
+
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'dev_dummyIndex';
+        $mockIndex->shouldReceive('saveObject')->once()->with(['property1' => 'test', 'objectID' => 1]);
+        $mockIndex->shouldReceive('deleteObject')->once()->with(1);
+        $mockIndex->shouldReceive('addObject')->once()->withArgs([['property1' => 'test'], 1]);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('dev_dummyIndex')->times(3)->andReturn($mockIndex);
+
+        $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, [
+            'applicationId' => 'test',
+            'appKey' => 'secret',
+        ], 'dev');
+
+        $manager->updateInIndices($dummyModel);
+        $manager->removeFromIndices($dummyModel);
+        $manager->pushToIndices($dummyModel);
+    }
+
+    /** @test */
+    public function it_prefixes_the_indexes_with_given_environment_config_for_reindex_operation()
+    {
+        $testModel = m::mock(DummyActiveRecordModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel->shouldReceive('getObjectID')->andReturn(1);
+
+        $mockActiveQuery = m::mock(ActiveQuery::class);
+        $mockActiveQuery->shouldReceive('all')->andReturn([$testModel]);
+
+        $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
+
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'dev_test';
+        $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
+
+        $mockTemporaryIndex = m::mock(Index::class);
+        $mockTemporaryIndex->indexName = 'tmp_dev_test';
+        $mockTemporaryIndex->shouldReceive('addObjects')->with([['property1' => 'test', 'objectID' => 1]]);
+        $mockTemporaryIndex->shouldReceive('setSettings')->with(['setting1' => 'value1']);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_dev_test')->andReturn($mockTemporaryIndex);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('dev_test')->andReturn($mockIndex);
+        $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_dev_test', 'dev_test']);
+
+        $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
+        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
+
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, null, 'dev');
+        $manager->reindex(DummyActiveRecordModel::class);
+    }
+
     /**
      * Returns an new AlgoliaManager with mocked Factories.
      *
-     * @param $client
-     * @param $activeRecordFactory
-     * @param $config
+     * @param Client $client
+     * @param ActiveRecordFactory $activeRecordFactory
+     * @param array $config
+     * @param null|string $env
      *
      * @return AlgoliaManager
      */
-    protected function getManager($client, $activeRecordFactory, $config = null)
+    protected function getManager($client, $activeRecordFactory, $config = null, $env = null)
     {
         if (! $config) {
             $config = [
@@ -204,6 +267,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
         $mockAlgoliaFactory->shouldReceive('make')->with($config)->andReturn($client);
         $manager = new AlgoliaManager($mockAlgoliaFactory, $activeRecordFactory, $config);
+        $manager->setEnv($env);
 
         return $manager;
     }
