@@ -3,6 +3,7 @@
 namespace leinonen\Yii2Algolia\ActiveRecord;
 
 use leinonen\Yii2Algolia\AlgoliaManager;
+use leinonen\Yii2Algolia\SearchableInterface;
 use Yii;
 
 /**
@@ -12,11 +13,17 @@ trait Searchable
 {
     /**
      * @see \yii\base\ArrayableTrait::toArray()
+     *
+     * @param array $fields
+     * @param array $expand
+     * @param bool $recursive
      */
     abstract public function toArray(array $fields = [], array $expand = [], $recursive = true);
 
     /**
      * @see \yii\db\BaseActiveRecord::getPrimaryKey()
+     *
+     * @param bool $asArray
      */
     abstract public function getPrimaryKey($asArray = false);
 
@@ -77,12 +84,8 @@ trait Searchable
     public function index()
     {
         $manager = $this->getAlgoliaManager();
-        $indices = $this->getIndices();
 
-        foreach ($indices as $index) {
-            $index = $manager->initIndex($index);
-            $index->addObject($this->getAlgoliaRecord(), $this->getObjectID());
-        }
+        return $manager->pushToIndices($this);
     }
 
     /**
@@ -93,12 +96,8 @@ trait Searchable
     public function removeFromIndices()
     {
         $manager = $this->getAlgoliaManager();
-        $indices = $this->getIndices();
 
-        foreach ($indices as $index) {
-            $index = $manager->initIndex($index);
-            $index->deleteObject($this->getObjectID());
-        }
+        $manager->removeFromIndices($this);
     }
 
     /**
@@ -107,14 +106,8 @@ trait Searchable
     public function updateInIndices()
     {
         $manager = $this->getAlgoliaManager();
-        $indices = $this->getIndices();
 
-        foreach ($indices as $index) {
-            $index = $manager->initIndex($index);
-            $record = $this->getAlgoliaRecord();
-            $record['objectID'] = $this->getObjectID();
-            $index->saveObject($record);
-        }
+        $manager->updateInIndices($this);
     }
 
     /**

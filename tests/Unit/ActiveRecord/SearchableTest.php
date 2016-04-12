@@ -74,16 +74,7 @@ class SearchableTest extends TestCase
     public function it_can_be_pushed_to_indices()
     {
         $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
-        $className = 'DummyActiveRecordModel';
-
-        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
-        $testModel->shouldReceive('getIndices')->andReturn([$className]);
-        $testModel->shouldReceive('getObjectID')->andReturn(1);
-
-        $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('addObject')->once()->withArgs([['property1' => 'test'], 1]);
-
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with($className)->andReturn($mockIndex);
+        $this->dummyAlgoliaManager->shouldReceive('pushToIndices')->with($testModel);
 
         $testModel->index();
     }
@@ -92,15 +83,8 @@ class SearchableTest extends TestCase
     public function it_can_be_removed_from_indices()
     {
         $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
-        $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
-        $className = 'DummyActiveRecordModel';
+        $this->dummyAlgoliaManager->shouldReceive('removeFromIndices')->with($testModel);
 
-        $testModel->shouldReceive('getIndices')->andReturn([$className]);
-
-        $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('deleteObject')->once()->with(1);
-
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with($className)->andReturn($mockIndex);
         $testModel->removeFromIndices();
     }
 
@@ -108,16 +92,7 @@ class SearchableTest extends TestCase
     public function it_can_be_updated_in_indices()
     {
         $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
-        $className = 'DummyActiveRecordModel';
-
-        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
-        $testModel->shouldReceive('getIndices')->andReturn([$className]);
-        $testModel->shouldReceive('getObjectID')->andReturn(1);
-
-        $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('saveObject')->once()->with(['property1' => 'test', 'objectID' => 1]);
-
-        $this->dummyAlgoliaManager->shouldReceive('initIndex')->with($className)->andReturn($mockIndex);
+        $this->dummyAlgoliaManager->shouldReceive('updateInIndices')->with($testModel);
 
         $testModel->updateInIndices();
     }

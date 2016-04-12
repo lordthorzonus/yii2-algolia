@@ -220,4 +220,4 @@ use leinonen\Yii2Algolia\AlgoliaComponent;
     ],
 ],
 ```
-Then when using any of the helpers methods from `leinonen\Yii2Algolia\AlgoliaManager` the environment will be prefixed to the index name. **Note if you use methods straight from [The Official Algolia Client](https://github.com/algolia/algoliasearch-client-php) the env config will have no effect.** 
+Then when using any of the helpers methods from `leinonen\Yii2Algolia\AlgoliaManager` the environment will be prefixed to the index name. Also using the helper methods found on `leinonen\Yii2Algolia\Searchable` trait will work. **Note if you use methods straight from [The Official Algolia Client](https://github.com/algolia/algoliasearch-client-php) the env config will have no effect.** 
