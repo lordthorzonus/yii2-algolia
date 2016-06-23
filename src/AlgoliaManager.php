@@ -140,6 +140,26 @@ class AlgoliaManager
     }
 
     /**
+     * Indexes multiple searchable models in a batch. The given searchable models must be of the same class.
+     *
+     * @param SearchableInterface[] $searchableModels
+     *
+     * @return array
+     */
+    public function pushMultipleToIndices(array $searchableModels)
+    {
+        list($indices, $algoliaRecords) = $this->getIndicesAndAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $response = [];
+
+        foreach ($indices as $index) {
+            /** @var Index $index  */
+            $response[$index->indexName] = $index->addObjects($algoliaRecords);
+        }
+
+        return $response;
+    }
+
+    /**
      * Updates the models data in all indices.
      *
      * @param SearchableInterface $searchableModel
@@ -155,6 +175,26 @@ class AlgoliaManager
             $record = $searchableModel->getAlgoliaRecord();
             $record['objectID'] = $searchableModel->getObjectID();
             $response[$index->indexName] = $index->saveObject($record);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Updates multiple models data in all indices.  The given searchable models must be of the same class.
+     *
+     * @param SearchableInterface[] $searchableModels
+     *
+     * @return array
+     */
+    public function updateMultipleInIndices(array $searchableModels)
+    {
+        list($indices, $algoliaRecords) = $this->getIndicesAndAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $response = [];
+
+        foreach ($indices as $index) {
+            /** @var Index $index  */
+            $response[$index->indexName] = $index->saveObjects($algoliaRecords);
         }
 
         return $response;
@@ -278,6 +318,20 @@ class AlgoliaManager
     }
 
     /**
+     * Returns the name of the class for given object.
+     * 
+     * @param $class
+     * 
+     * @return string
+     */
+    private function getClassName($class)
+    {
+        $reflectionClass = new \ReflectionClass($class);
+        
+        return $reflectionClass->name;
+    }
+
+    /**
      * Initializes indices for the given SearchableModel.
      *
      * @param SearchableInterface $searchableModel
@@ -288,16 +342,46 @@ class AlgoliaManager
     {
         $indexNames = $searchableModel->getIndices();
 
-        $indices = [];
+        $indices = array_map(function($indexName){
 
-        foreach ($indexNames as $indexName) {
             if($this->env !== null){
                 $indexName = $this->env . '_' . $indexName;
             }
 
-            $indices[] = $this->initIndex($indexName);
-        }
+            return $this->initIndex($indexName);
+        }, $indexNames);
 
         return $indices;
+
+    }
+
+    /**
+     * Maps an array of searchable models into an Algolia friendly array. Returns also indices for the searchable model
+     * which the array consists of.
+     *
+     * @param SearchableInterface[] $searchableModels
+     *
+     * @return array
+     */
+    private function getIndicesAndAlgoliaRecordsFromSearchableModelArray(array $searchableModels)
+    {
+        // Use the first element of the array to define what kind of models we are indexing.
+        $arrayType = $this->getClassName($searchableModels[0]);
+        $indices = $this->initIndices($this->factory->makeSearchableObject($arrayType));
+
+        $algoliaRecords = array_map(function ($searchableModel) use ($arrayType) {
+            /** @var $searchableModel SearchableInterface */
+            if (!$searchableModel instanceof $arrayType) {
+                throw new \InvalidArgumentException("The given array should not contain multiple different classes");
+            }
+
+            $algoliaRecord = $searchableModel->getAlgoliaRecord();
+            $algoliaRecord['objectID'] = $searchableModel->getObjectID();
+
+            return $algoliaRecord;
+
+        }, $searchableModels);
+
+        return [$indices, $algoliaRecords];
     }
 }

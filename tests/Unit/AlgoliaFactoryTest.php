@@ -4,6 +4,7 @@ namespace leinonen\Yii2Algolia\Tests\Unit;
 
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaFactory;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 
 class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,5 +44,24 @@ class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
         $client = $factory->make([
             'applicationId' => 'app-id',
         ]);
+    }
+
+    /** @test */
+    public function it_can_make_new_searchable_objects()
+    {
+        $factory = new AlgoliaFactory();
+        $searchableModel = $factory->makeSearchableObject(DummyActiveRecordModel::class);
+        $this->assertInstanceOf(DummyActiveRecordModel::class, $searchableModel);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Cannot initiate a class (leinonen\Yii2Algolia\AlgoliaFactory) which doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     */
+    public function it_should_throw_an_exception_if_not_a_searchable_class_is_given()
+    {
+        $factory = new AlgoliaFactory();
+        $factory->makeSearchableObject(AlgoliaFactory::class);
     }
 }

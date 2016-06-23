@@ -22,11 +22,27 @@ class AlgoliaFactory
     }
 
     /**
+     * Returns a new instance for given class which must implement the SearchableInterface.
+     *
+     * @param string $className
+     *
+     * @return SearchableInterface
+     */
+    public function makeSearchableObject($className)
+    {
+        if (! (new \ReflectionClass($className))->implementsInterface(SearchableInterface::class)) {
+            throw new \InvalidArgumentException("Cannot initiate a class ({$className}) which doesn't implement leinonen\\Yii2Algolia\\SearchableInterface");
+        }
+
+        return new $className();
+    }
+
+    /**
      * Creates an new Algolia Client.
      *
      * @param string $applicationId The application ID you have in your admin interface
      * @param string $apiKey A valid API key for the service
-     * @param null $hostsArray The list of hosts that you have received for the service
+     * @param null|array $hostsArray The list of hosts that you have received for the service
      * @param array $options
      *
      * @return Client

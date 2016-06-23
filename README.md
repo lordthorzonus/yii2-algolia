@@ -91,12 +91,32 @@ class Contact extends ActiveRecord implements SearchableInterface
 {
     use Searchable;
     
+    /**
+     * {@inheritdoc}
+     */
     public function indices()
     {
         return ['first_index', 'second_index'];
     }
 }
 ```
+
+By default the model is converted into an array in background with Yii's `toArray()` method. If you want to customize it you can override the `getAlgoliaRecord() method`.
+```php
+class Contact extends ActiveRecord implements SearchableInterface
+{
+    use Searchable;
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getAlgoliaRecord()
+    {
+        return array_merge($this->toArray(), ['someStaticValue' => 'It's easy']);
+    }
+}
+```
+
 
 You can also also implement the `leinonen\Yii2Algolia\SearchableInterface` for plain old PHP objects and then use the `leinonen\Yii2Algolia\AlgoliaManager` to control them. Note that all helpers are not available for use other than with ActiveRecord classes.
 
@@ -117,6 +137,18 @@ Or if you fancy a more service like architecture, you can use the methods on `le
 $contact = new Contact();
 $contact->name = 'test';
 $manager->pushToIndices($contact);
+```
+
+It's also possible to index multiple models of the same type in a batch with the service's `pushMultipleToIndices()`.
+
+```php
+$contact1 = new Contact();
+$contact1->name = 'test';
+
+$contact2 = new Contact();
+$contact2->name = 'anotherTest';
+
+$manager->pushMultipleToIndices([$contact1, $contact2]);
 ```
 
 ####Manual Removal
@@ -145,6 +177,13 @@ Or with the service:
 ```php
 $contact = Contact::findOne(['name' => 'test');
 $manager->updateInIndices($contact);
+```
+
+It's also possible to update multiple models of the same type in a batch with the service's `updateMultipleInIndices()`.
+
+```php
+$contacts = Contact::find()->where(['type' => 'awesome']);
+$manager->updateMultipleInIndices($contacts);
 ```
 
 ####Reindexing
@@ -178,8 +217,8 @@ class Contact extends ActiveRecord implements SearchableInterface
     use Searchable;
     
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function behaviors()
     {
         return [
