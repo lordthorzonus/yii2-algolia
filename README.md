@@ -208,12 +208,24 @@ To safely reindex all your ActiveRecord models(index to a temporary index + move
 ```php
 $manager->reindex(Contact::class);
 ```
+
+You can also use the static method on ActiveRecord class if you prefer Yii's style:
+
+```php
+Contact::reindex();
+```
  
 ####Clearing Indices
 To clear indices where the ActiveRecord is synced to, use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 
 ```php
 $manager->clearIndices(Contact::class);
+```
+
+You can also use the static method on ActiveRecord class if you prefer Yii's style:
+
+```php
+Contact::clearIndices();
 ```
 
 ###Auto-indexing

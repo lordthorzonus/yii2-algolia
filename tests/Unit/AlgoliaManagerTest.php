@@ -296,7 +296,62 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
         $manager->updateMultipleInIndices($arrayOfTestModels);
     }
+    
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The given array should not contain multiple different classes
+     */
+    public function it_should_throw_an_exception_if_multiple_different_objects_are_used_for_updating_in_batches()
+    {
+        $testModel = m::mock(DummyActiveRecordModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel->shouldReceive('getObjectID')->andReturn(1);
 
+        // This model should throw an exception
+        $testModel2 = m::mock(AlgoliaFactory::class);
+        $testModelClassName = (new \ReflectionClass($testModel))->name;
+
+        $mockIndex = m::mock(Index::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
+
+        $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
+        $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
+
+        $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
+        $manager->updateMultipleInIndices([$testModel,$testModel2]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The given array should not contain multiple different classes
+     */
+    public function it_should_throw_an_exception_if_multiple_different_objects_are_used_for_indexing_in_batches()
+    {
+        $testModel = m::mock(DummyActiveRecordModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel->shouldReceive('getObjectID')->andReturn(1);
+
+        // This model should throw an exception
+        $testModel2 = m::mock(AlgoliaFactory::class);
+        $testModelClassName = (new \ReflectionClass($testModel))->name;
+
+        $mockIndex = m::mock(Index::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
+
+        $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
+        $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
+
+        $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
+        $manager->pushMultipleToIndices([$testModel,$testModel2]);
+    }
 
     /**
      * Returns an new AlgoliaManager with mocked Factories.
@@ -333,3 +388,4 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         return $manager;
     }
 }
+

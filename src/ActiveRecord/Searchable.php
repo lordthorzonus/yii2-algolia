@@ -111,12 +111,32 @@ trait Searchable
     }
 
     /**
+     * Re-indexes the indices safely for this ActiveRecord class.
+     */
+    public static function reindex()
+    {
+        $manager = static::getAlgoliaManager();
+        
+        $manager->reindex(__CLASS__);
+    }
+
+    /**
+     * Clears the indices for this ActiveRecord class.
+     */
+    public static function clearIndices()
+    {
+        $manager = static::getAlgoliaManager();
+
+        $manager->clearIndices(__CLASS__);
+    }
+
+    /**
      * Returns the AlgoliaManager Instance.
      *
      * @return AlgoliaManager
      * @throws \yii\base\InvalidConfigException
      */
-    private function getAlgoliaManager()
+    private static function getAlgoliaManager()
     {
         return Yii::$container->get(AlgoliaManager::class);
     }

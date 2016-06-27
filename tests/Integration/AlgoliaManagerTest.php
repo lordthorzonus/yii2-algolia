@@ -6,6 +6,7 @@ use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use leinonen\Yii2Algolia\SearchableInterface;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use Yii;
 use Mockery as m;
 use yiiunit\TestCase;
@@ -43,6 +44,24 @@ class AlgoliaManagerTest extends TestCase
 
         $this->deleteIndex($index);
         $this->assertCount(1, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_index_multiple_objects_in_a_batch()
+    {
+        $dummyModel1 = $this->makeDummyModel(1);
+        $dummyModel2 = $this->makeDummyModel(2);
+        $indexName = $dummyModel1->getIndices()[0];
+
+        $pushResponse = $this->algoliaManager->pushMultipleToIndices([$dummyModel1, $dummyModel2]);
+
+        $index = $this->algoliaManager->initIndex($indexName);
+        $index->waitTask($pushResponse[$indexName]['taskID']);
+
+        $searchResult = $index->search('otherProperty');
+
+        $this->deleteIndex($index);
+        $this->assertCount(2, $searchResult['hits']);
     }
 
     /** @test */
@@ -120,13 +139,31 @@ class AlgoliaManagerTest extends TestCase
         $this->assertArrayHasKey('deletedAt', $deleteResult);
         $this->assertArrayHasKey('taskID', $deleteResult);
     }
+    
+    /**
+     * Returns a dummy Yii's Base Mdoel object.
+     *
+     * @param int $objectId
+     *
+     * @return SearchableInterface
+     */
+    private function makeDummyModel($objectId = 1)
+    {
+        return new DummyModel([
+            'id' => $objectId,
+            'test' => 'test',
+            'otherProperty' => 'otherProperty'
+        ]);
+    }
 
     /**
      * Returns a dummy ActiveRecord object.
      *
+     * @param int $objectId
+     *
      * @return SearchableInterface
      */
-    private function makeDummyActiveRecord()
+    private function makeDummyActiveRecord($objectId = 1)
     {
         // ActiveRecord needs to mocked because of the database.
         $searchableObject = m::mock(DummyActiveRecordModel::class);
@@ -134,7 +171,8 @@ class AlgoliaManagerTest extends TestCase
             'test',
             'otherProperty',
         ]);
-        $searchableObject->shouldReceive('getObjectID')->andReturn(1);
+
+        $searchableObject->shouldReceive('getObjectID')->andReturn($objectId);
         $searchableObject->makePartial();
         $searchableObject->test = 'test';
         $searchableObject->otherProperty = 'otherProperty';

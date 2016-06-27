@@ -96,4 +96,29 @@ class SearchableTest extends TestCase
 
         $testModel->updateInIndices();
     }
+
+    /** @test */
+    public function it_uses_the_primary_key_of_the_active_record_for_the_object_id()
+    {
+        $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
+        $testModel->shouldReceive('getPrimaryKey')->andReturn(1);
+
+        $this->assertEquals(1, $testModel->getObjectID());
+    }
+
+    /** @test */
+    public function it_can_be_re_indexed()
+    {
+        $this->dummyAlgoliaManager->shouldReceive('reindex')->with(DummyActiveRecordModel::class);
+
+        DummyActiveRecordModel::reindex();
+    }
+
+    /** @test */
+    public function it_can_be_cleared_from_indices()
+    {
+        $this->dummyAlgoliaManager->shouldReceive('clearIndices')->with(DummyActiveRecordModel::class);
+
+        DummyActiveRecordModel::clearIndices();
+    }
 }
