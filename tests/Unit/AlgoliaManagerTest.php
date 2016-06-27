@@ -8,6 +8,7 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 use Mockery as m;
 use yii\db\ActiveQuery;
@@ -310,7 +311,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getObjectID')->andReturn(1);
 
         // This model should throw an exception
-        $testModel2 = m::mock(AlgoliaFactory::class);
+        $testModel2 = m::mock(DummyModel::class);
         $testModelClassName = (new \ReflectionClass($testModel))->name;
 
         $mockIndex = m::mock(Index::class);
@@ -338,7 +339,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getObjectID')->andReturn(1);
 
         // This model should throw an exception
-        $testModel2 = m::mock(AlgoliaFactory::class);
+        $testModel2 = m::mock(DummyModel::class);
         $testModelClassName = (new \ReflectionClass($testModel))->name;
 
         $mockIndex = m::mock(Index::class);
