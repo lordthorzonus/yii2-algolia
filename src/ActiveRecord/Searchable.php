@@ -3,7 +3,6 @@
 namespace leinonen\Yii2Algolia\ActiveRecord;
 
 use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\SearchableInterface;
 use Yii;
 
 /**
