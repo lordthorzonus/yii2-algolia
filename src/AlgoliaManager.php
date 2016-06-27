@@ -367,7 +367,6 @@ class AlgoliaManager
         $indices = $this->initIndices($this->factory->makeSearchableObject($arrayType));
 
         $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
-
             if (! $searchableModel instanceof $arrayType) {
                 throw new \InvalidArgumentException('The given array should not contain multiple different classes');
             }
