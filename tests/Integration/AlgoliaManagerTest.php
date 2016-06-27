@@ -92,12 +92,12 @@ class AlgoliaManagerTest extends TestCase
                     'class' => AlgoliaComponent::class,
                     'applicationId' => getenv('ALGOLIA_ID'),
                     'apiKey' => getenv('ALGOLIA_KEY'),
-                    'env' => 'test'
+                    'env' => 'test',
                 ],
             ],
         ]);
 
-        $algoliaManager =  Yii::$container->get(AlgoliaManager::class);
+        $algoliaManager = Yii::$container->get(AlgoliaManager::class);
 
         $searchableObject = $this->makeDummyActiveRecord();
         $searchableObject->shouldReceive('getIndices')->andReturn(['index']);
@@ -139,7 +139,7 @@ class AlgoliaManagerTest extends TestCase
         $this->assertArrayHasKey('deletedAt', $deleteResult);
         $this->assertArrayHasKey('taskID', $deleteResult);
     }
-    
+
     /**
      * Returns a dummy Yii's Base Mdoel object.
      *
@@ -152,7 +152,7 @@ class AlgoliaManagerTest extends TestCase
         return new DummyModel([
             'id' => $objectId,
             'test' => 'test',
-            'otherProperty' => 'otherProperty'
+            'otherProperty' => 'otherProperty',
         ]);
     }
 
