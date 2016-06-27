@@ -11,6 +11,22 @@
 
 Yii2 Algolia is an Algolia bridge for Yii2. It uses the [official Algolia Search API package](https://github.com/algolia/algoliasearch-client-php).
 
+Table of contents
+=================
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [ActiveRecordHelpers](#activerecord-helpers)
+* [Indexing](#indexing)
+    * [Manual Indexing](#manual-indexing)
+    * [Manual Removal](#manual-removal)
+    * [Manual Updating](#manual-updating)
+    * [Reindexing](#reindexing)
+    * [Clearing Indices](#clearing-indices)
+    * [Auto-indexing](#auto-indexing)
+* [Using multiple environments](#using-multiple-environments) 
+    
+
 ## Installation
 Require this package, with [Composer](https://getcomposer.org/), in the root directory of your project.
 
