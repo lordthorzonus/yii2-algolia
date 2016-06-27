@@ -296,7 +296,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
         $manager->updateMultipleInIndices($arrayOfTestModels);
     }
-    
+
     /**
      * @test
      * @expectedException \InvalidArgumentException
@@ -322,7 +322,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
 
         $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
-        $manager->updateMultipleInIndices([$testModel,$testModel2]);
+        $manager->updateMultipleInIndices([$testModel, $testModel2]);
     }
 
     /**
@@ -350,7 +350,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
 
         $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
-        $manager->pushMultipleToIndices([$testModel,$testModel2]);
+        $manager->pushMultipleToIndices([$testModel, $testModel2]);
     }
 
     /**
@@ -373,11 +373,11 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
             ];
         }
 
-        if($activeRecordFactory === null) {
+        if ($activeRecordFactory === null) {
             $activeRecordFactory = m::mock(ActiveRecordFactory::class);
         }
 
-        if($algoliaFactory === null) {
+        if ($algoliaFactory === null) {
             $algoliaFactory = m::mock(AlgoliaFactory::class);
         }
 
@@ -388,4 +388,3 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         return $manager;
     }
 }
-

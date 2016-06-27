@@ -152,7 +152,7 @@ class AlgoliaManager
         $response = [];
 
         foreach ($indices as $index) {
-            /** @var Index $index  */
+            /* @var Index $index  */
             $response[$index->indexName] = $index->addObjects($algoliaRecords);
         }
 
@@ -193,7 +193,7 @@ class AlgoliaManager
         $response = [];
 
         foreach ($indices as $index) {
-            /** @var Index $index  */
+            /* @var Index $index  */
             $response[$index->indexName] = $index->saveObjects($algoliaRecords);
         }
 
@@ -261,7 +261,6 @@ class AlgoliaManager
             $temporaryIndex->setSettings($settings);
 
             $response[$index->indexName] = $this->moveIndex($temporaryIndexName, $index->indexName);
-
         }
 
         return $response;
@@ -319,15 +318,15 @@ class AlgoliaManager
 
     /**
      * Returns the name of the class for given object.
-     * 
+     *
      * @param $class
-     * 
+     *
      * @return string
      */
     private function getClassName($class)
     {
         $reflectionClass = new \ReflectionClass($class);
-        
+
         return $reflectionClass->name;
     }
 
@@ -342,9 +341,8 @@ class AlgoliaManager
     {
         $indexNames = $searchableModel->getIndices();
 
-        $indices = array_map(function($indexName){
-
-            if($this->env !== null){
+        $indices = array_map(function ($indexName) {
+            if ($this->env !== null) {
                 $indexName = $this->env . '_' . $indexName;
             }
 
@@ -352,7 +350,6 @@ class AlgoliaManager
         }, $indexNames);
 
         return $indices;
-
     }
 
     /**
@@ -371,15 +368,14 @@ class AlgoliaManager
 
         $algoliaRecords = array_map(function ($searchableModel) use ($arrayType) {
             /** @var $searchableModel SearchableInterface */
-            if (!$searchableModel instanceof $arrayType) {
-                throw new \InvalidArgumentException("The given array should not contain multiple different classes");
+            if (! $searchableModel instanceof $arrayType) {
+                throw new \InvalidArgumentException('The given array should not contain multiple different classes');
             }
 
             $algoliaRecord = $searchableModel->getAlgoliaRecord();
             $algoliaRecord['objectID'] = $searchableModel->getObjectID();
 
             return $algoliaRecord;
-
         }, $searchableModels);
 
         return [$indices, $algoliaRecords];

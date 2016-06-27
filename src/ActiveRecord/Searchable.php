@@ -115,7 +115,7 @@ trait Searchable
     public static function reindex()
     {
         $manager = static::getAlgoliaManager();
-        
+
         $manager->reindex(__CLASS__);
     }
 
