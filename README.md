@@ -198,7 +198,10 @@ $manager->updateInIndices($contact);
 It's also possible to update multiple models of the same type in a batch with the service's `updateMultipleInIndices()`.
 
 ```php
-$contacts = Contact::find()->where(['type' => 'awesome']);
+$contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
+foreach($contacts as $contact) {
+  $contact->type = Contact::TYPE_NOT_SO_AWESOME;
+}
 $manager->updateMultipleInIndices($contacts);
 ```
 
