@@ -128,7 +128,7 @@ class Contact extends ActiveRecord implements SearchableInterface
      */
     public function getAlgoliaRecord()
     {
-        return array_merge($this->toArray(), ['someStaticValue' => 'It's easy']);
+        return array_merge($this->toArray(), ['someStaticValue' => "It's easy"]);
     }
 }
 ```
