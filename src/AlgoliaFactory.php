@@ -3,7 +3,6 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
-use InvalidArgumentException;
 
 class AlgoliaFactory
 {
