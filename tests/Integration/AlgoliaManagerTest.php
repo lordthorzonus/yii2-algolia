@@ -32,7 +32,6 @@ class AlgoliaManagerTest extends TestCase
                 ],
             ],
         ]);
-
         $this->algoliaManager = Yii::$container->get(AlgoliaManager::class);
     }
 

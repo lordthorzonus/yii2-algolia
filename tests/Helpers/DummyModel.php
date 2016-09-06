@@ -12,9 +12,7 @@ class DummyModel extends Model implements SearchableInterface
     public $id;
 
     /**
-     * Returns an array of indices for this model.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getIndices()
     {
@@ -22,9 +20,7 @@ class DummyModel extends Model implements SearchableInterface
     }
 
     /**
-     * Returns the model in an Algolia friendly array form.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getAlgoliaRecord()
     {
@@ -32,9 +28,7 @@ class DummyModel extends Model implements SearchableInterface
     }
 
     /**
-     * Returns an unique identifier for the Model.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getObjectID()
     {

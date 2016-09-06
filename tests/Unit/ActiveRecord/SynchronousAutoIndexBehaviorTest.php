@@ -42,8 +42,8 @@ class SynchronousAutoIndexBehaviorTest extends TestCase
 
     public function tearDown()
     {
-        parent::tearDown();
         m::close();
+        parent::tearDown();
     }
 
     /** @test */

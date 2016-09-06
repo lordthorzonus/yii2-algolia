@@ -5,7 +5,6 @@ namespace leinonen\Yii2Algolia\Tests\Unit;
 use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
-use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
@@ -17,8 +16,8 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
-        parent::tearDown();
         m::close();
+        parent::tearDown();
     }
 
     /** @test */
@@ -196,10 +195,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient->shouldReceive('initIndex')->with('dev_dummyIndex')->times(3)->andReturn($mockIndex);
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
-        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, null, [
-            'applicationId' => 'test',
-            'appKey' => 'secret',
-        ], 'dev');
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, 'dev');
 
         $manager->updateInIndices($dummyModel);
         $manager->removeFromIndices($dummyModel);
@@ -236,7 +232,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
         $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
 
-        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, null, null, 'dev');
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory,'dev');
         $manager->reindex(DummyActiveRecordModel::class);
     }
 
@@ -247,7 +243,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getIndices')->andReturn(['test']);
         $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
         $testModel->shouldReceive('getObjectID')->andReturn(1);
-        $testModelClassName = (new \ReflectionClass($testModel))->name;
 
         $testModel2 = m::mock(DummyActiveRecordModel::class);
         $testModel2->shouldNotReceive('getIndices');
@@ -262,10 +257,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
-        $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
-
-        $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
+        $manager = $this->getManager($mockAlgoliaClient, null);
         $manager->pushMultipleToIndices($arrayOfTestModels);
     }
 
@@ -276,7 +268,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getIndices')->andReturn(['test']);
         $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
         $testModel->shouldReceive('getObjectID')->andReturn(1);
-        $testModelClassName = (new \ReflectionClass($testModel))->name;
 
         $testModel2 = m::mock(DummyActiveRecordModel::class);
         $testModel2->shouldReceive('getIndices')->andReturn(['test']);
@@ -291,10 +282,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
-        $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
-
-        $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
+        $manager = $this->getManager($mockAlgoliaClient, null);
         $manager->updateMultipleInIndices($arrayOfTestModels);
     }
 
@@ -312,17 +300,13 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         // This model should throw an exception
         $testModel2 = m::mock(DummyModel::class);
-        $testModelClassName = (new \ReflectionClass($testModel))->name;
 
         $mockIndex = m::mock(Index::class);
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
-        $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
-
-        $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
+        $manager = $this->getManager($mockAlgoliaClient, null);
         $manager->updateMultipleInIndices([$testModel, $testModel2]);
     }
 
@@ -340,17 +324,13 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         // This model should throw an exception
         $testModel2 = m::mock(DummyModel::class);
-        $testModelClassName = (new \ReflectionClass($testModel))->name;
 
         $mockIndex = m::mock(Index::class);
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
-        $mockAlgoliaFactory->shouldReceive('makeSearchableObject')->with($testModelClassName)->andReturn($testModel);
-
-        $manager = $this->getManager($mockAlgoliaClient, null, $mockAlgoliaFactory);
+        $manager = $this->getManager($mockAlgoliaClient, null);
         $manager->pushMultipleToIndices([$testModel, $testModel2]);
     }
 
@@ -359,31 +339,17 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
      *
      * @param Client $client
      * @param null|ActiveRecordFactory $activeRecordFactory
-     * @param null|AlgoliaFactory $algoliaFactory
-     * @param null|array $config
      * @param null|string $env
      *
      * @return AlgoliaManager
      */
-    protected function getManager($client, $activeRecordFactory = null, $algoliaFactory = null, $config = null, $env = null)
+    protected function getManager($client, $activeRecordFactory = null, $env = null)
     {
-        if (! $config) {
-            $config = [
-                'applicationId' => 'test',
-                'appKey' => 'secret',
-            ];
-        }
-
         if ($activeRecordFactory === null) {
             $activeRecordFactory = m::mock(ActiveRecordFactory::class);
         }
 
-        if ($algoliaFactory === null) {
-            $algoliaFactory = m::mock(AlgoliaFactory::class);
-        }
-
-        $algoliaFactory->shouldReceive('make')->with($config)->andReturn($client);
-        $manager = new AlgoliaManager($algoliaFactory, $activeRecordFactory, $config);
+        $manager = new AlgoliaManager($client, $activeRecordFactory);
         $manager->setEnv($env);
 
         return $manager;

@@ -3,11 +3,13 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
+use InvalidArgumentException;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Component;
+use yii\base\InvalidConfigException;
 
 /**
  * @method Client getClient()
@@ -78,6 +80,31 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     protected $manager;
 
     /**
+     * @var AlgoliaFactory
+     */
+    private $algoliaFactory;
+
+    /**
+     * @var ActiveRecordFactory
+     */
+    private $activeRecordFactory;
+
+    /**
+     * Initiates a new AlgoliaComponent.
+     *
+     * @param AlgoliaFactory $algoliaFactory
+     * @param ActiveRecordFactory $activeRecordFactory
+     * @param array $config
+     */
+    public function __construct(AlgoliaFactory $algoliaFactory, ActiveRecordFactory $activeRecordFactory, $config = [])
+    {
+        $this->algoliaFactory = $algoliaFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+
+        parent::__construct($config);
+    }
+
+    /**
      * Bootstrap method to be called during application bootstrap stage.
      *
      * @param Application $app the application currently running
@@ -90,9 +117,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     }
 
     /**
-     * Initializes the object.
-     * This method is invoked at the end of the constructor after the object is initialized with the
-     * given configuration.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -106,16 +131,10 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      */
     protected function createManager()
     {
-        $factory = new AlgoliaFactory();
-        $activeRecordFactory = new ActiveRecordFactory();
-        $config = [
-            'applicationId' => $this->applicationId,
-            'apiKey' => $this->apiKey,
-            'hostsArray' => $this->hostsArray,
-            'options' => $this->options,
-        ];
+        $config = $this->generateConfig();
+        $client = $this->algoliaFactory->make($config);
 
-        $algoliaManager = new AlgoliaManager($factory, $activeRecordFactory, $config);
+        $algoliaManager = new AlgoliaManager($client, $this->activeRecordFactory);
         $algoliaManager->setEnv($this->env);
 
         return $algoliaManager;
@@ -132,5 +151,27 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     public function __call($method, $parameters)
     {
         return call_user_func_array([$this->manager, $method], $parameters);
+    }
+
+    /**
+     * Generates config for the Algolia Manager.
+     *
+     * @return AlgoliaConfig
+     * @throws \Exception
+     */
+    private function generateConfig()
+    {
+        if (empty($this->applicationId) || empty($this->apiKey)) {
+            throw new \Exception('applicationId and apiKey are required');
+        }
+
+        $config = new AlgoliaConfig(
+            $this->applicationId,
+            $this->apiKey,
+            $this->hostsArray,
+            $this->options
+        );
+
+        return $config;
     }
 }

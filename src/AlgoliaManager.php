@@ -42,7 +42,7 @@ class AlgoliaManager
     protected $factory;
 
     /**
-     * @var array
+     * @var AlgoliaConfig
      */
     protected $config;
 
@@ -64,14 +64,13 @@ class AlgoliaManager
     /**
      * Initiates a new AlgoliaManager.
      *
-     * @param AlgoliaFactory $algoliaFactory
+     * @param Client $client
      * @param ActiveRecordFactory $activeRecordFactory
-     * @param array $config Configurations for the Algolia Client.
+     *
      */
-    public function __construct(AlgoliaFactory $algoliaFactory, ActiveRecordFactory $activeRecordFactory, array $config = [])
+    public function __construct(Client $client, ActiveRecordFactory $activeRecordFactory)
     {
-        $this->factory = $algoliaFactory;
-        $this->config = $config;
+        $this->client = $client;
         $this->activeRecordFactory = $activeRecordFactory;
     }
 
@@ -82,21 +81,7 @@ class AlgoliaManager
      */
     public function getClient()
     {
-        if (is_null($this->client)) {
-            $this->client = $this->factory->make($this->config);
-        }
-
         return $this->client;
-    }
-
-    /**
-     * Returns the config array.
-     *
-     * @return array
-     */
-    public function getConfig()
-    {
-        return $this->config;
     }
 
     /**
@@ -364,7 +349,7 @@ class AlgoliaManager
     {
         // Use the first element of the array to define what kind of models we are indexing.
         $arrayType = $this->getClassName($searchableModels[0]);
-        $indices = $this->initIndices($this->factory->makeSearchableObject($arrayType));
+        $indices = $this->initIndices($searchableModels[0]);
 
         $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
             if (! $searchableModel instanceof $arrayType) {
