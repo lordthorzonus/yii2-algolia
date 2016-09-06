@@ -47,7 +47,7 @@ class AlgoliaManager
     protected $config;
 
     /**
-     * @var null|Client
+     * @var Client
      */
     protected $client;
 
@@ -302,20 +302,6 @@ class AlgoliaManager
     }
 
     /**
-     * Returns the name of the class for given object.
-     *
-     * @param $class
-     *
-     * @return string
-     */
-    private function getClassName($class)
-    {
-        $reflectionClass = new \ReflectionClass($class);
-
-        return $reflectionClass->name;
-    }
-
-    /**
      * Initializes indices for the given SearchableModel.
      *
      * @param SearchableInterface $searchableModel
@@ -348,7 +334,7 @@ class AlgoliaManager
     private function getIndicesAndAlgoliaRecordsFromSearchableModelArray(array $searchableModels)
     {
         // Use the first element of the array to define what kind of models we are indexing.
-        $arrayType = $this->getClassName($searchableModels[0]);
+        $arrayType = get_class($searchableModels[0]);
         $indices = $this->initIndices($searchableModels[0]);
 
         $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
