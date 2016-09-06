@@ -232,7 +232,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
         $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
 
-        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory,'dev');
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, 'dev');
         $manager->reindex(DummyActiveRecordModel::class);
     }
 

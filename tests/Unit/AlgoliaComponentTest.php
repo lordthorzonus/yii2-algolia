@@ -64,7 +64,6 @@ class AlgoliaComponentTest extends TestCase
         /** @var Client $client */
         $client = $manager->getClient();
         $this->assertEquals($this->mockAlgoliaClient, $client);
-
     }
 
     /** @test */

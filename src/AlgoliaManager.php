@@ -66,7 +66,6 @@ class AlgoliaManager
      *
      * @param Client $client
      * @param ActiveRecordFactory $activeRecordFactory
-     *
      */
     public function __construct(Client $client, ActiveRecordFactory $activeRecordFactory)
     {
