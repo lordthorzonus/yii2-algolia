@@ -13,7 +13,6 @@ use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 use Mockery as m;
 use yii\db\ActiveQuery;
-use yii\db\ActiveQueryInterface;
 
 class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -362,7 +361,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
             $activeRecordFactory = m::mock(ActiveRecordFactory::class);
         }
 
-        if($activeQueryChunker === null) {
+        if ($activeQueryChunker === null) {
             $activeQueryChunker = m::mock(ActiveQueryChunker::class);
         }
 
@@ -399,7 +398,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
                     $this->assertEquals([$expectedTestModelAlgoliaRecord], $closureResult);
 
                     return is_callable($closure);
-                })
+                }),
             ]
         )->andReturn([$expectedTestModelAlgoliaRecord]);
 
