@@ -75,8 +75,11 @@ class AlgoliaManager
      * @param ActiveRecordFactory $activeRecordFactory
      * @param ActiveQueryChunker $activeQueryChunker
      */
-    public function __construct(Client $client, ActiveRecordFactory $activeRecordFactory, ActiveQueryChunker $activeQueryChunker)
-    {
+    public function __construct(
+        Client $client,
+        ActiveRecordFactory $activeRecordFactory,
+        ActiveQueryChunker $activeQueryChunker
+    ) {
         $this->client = $client;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->activeQueryChunker = $activeQueryChunker;

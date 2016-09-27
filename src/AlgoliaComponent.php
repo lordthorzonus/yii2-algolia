@@ -3,14 +3,12 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
-use InvalidArgumentException;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
 
 /**
  * @method Client getClient()

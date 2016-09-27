@@ -177,7 +177,7 @@ $contact->removeFromIndices();
 
 Or with the service:
 ```php
-$contact = Contact::findOne(['name' => 'test');
+$contact = Contact::findOne(['name' => 'test']);
 $manager->removeFromIndices($contact);
 ```
 
@@ -185,13 +185,13 @@ $manager->removeFromIndices($contact);
 Update is triggered using the `updateInIndices()` instance method.
 
 ```php
-$contact = Contact::findOne(['name' => 'test');
+$contact = Contact::findOne(['name' => 'test']);
 $contact->updateInIndices();
 ```
 
 Or with the service:
 ```php
-$contact = Contact::findOne(['name' => 'test');
+$contact = Contact::findOne(['name' => 'test']);
 $manager->updateInIndices($contact);
 ```
 
