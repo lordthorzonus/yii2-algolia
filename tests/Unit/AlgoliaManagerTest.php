@@ -372,7 +372,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Returns a mock of the ActiveQuery chunker with expectations for the reindex operation.
+     * Returns a mock of the ActiveQueryChunker with expectations for the reindex operation.
      *
      * @param m\MockInterface $mockActiveQuery The ActiveQuery
      * @param SearchableInterface $testModel
@@ -391,7 +391,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
                 500,
                 m::on(function ($closure) use ($testModel, $expectedTestModelAlgoliaRecord) {
 
-                    // The closure receives an array of a testModel as the result of chunking
+                    // The closure receives an array consisting of a single testModel as the result of chunking
                     // and it should convert it into a proper array of Algolia indexable records.
                     // We'll only test the first chunk as the it confirms if the closure works as expected.
                     $closureResult = $closure([$testModel]);
