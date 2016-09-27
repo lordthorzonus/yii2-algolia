@@ -1,6 +1,5 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests\Unit\ActiveRecord;
 
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
@@ -47,7 +46,7 @@ class ActiveQueryChunkerTest extends \PHPUnit_Framework_TestCase
         $activeQueryChunker->chunk($activeQuery, 1, function ($dummyModelChunk) use ($callbackAssertor) {
             $this->assertCount(1, $dummyModelChunk);
 
-            foreach($dummyModelChunk as $dummyModel) {
+            foreach ($dummyModelChunk as $dummyModel) {
                 $callbackAssertor->doSomething($dummyModel->id);
             }
         });
@@ -79,7 +78,7 @@ class ActiveQueryChunkerTest extends \PHPUnit_Framework_TestCase
         $activeQueryChunker->chunk($activeQuery, 1, function ($dummyModelChunk) use ($callbackAssertor) {
             $this->assertCount(1, $dummyModelChunk);
 
-            foreach($dummyModelChunk as $dummyModel) {
+            foreach ($dummyModelChunk as $dummyModel) {
                 $callbackAssertor->doSomething($dummyModel->id);
             }
 
@@ -115,7 +114,7 @@ class ActiveQueryChunkerTest extends \PHPUnit_Framework_TestCase
         $results = $activeQueryChunker->chunk($activeQuery, 1, function ($dummyModelChunk) {
             $this->assertCount(1, $dummyModelChunk);
 
-            foreach($dummyModelChunk as $dummyModel) {
+            foreach ($dummyModelChunk as $dummyModel) {
                 $dummyModel->id = 'new id';
             }
 
@@ -155,8 +154,8 @@ class ActiveQueryChunkerTest extends \PHPUnit_Framework_TestCase
         $results = $activeQueryChunker->chunk($activeQuery, 1, function ($dummyModelChunk) {
             $this->assertCount(1, $dummyModelChunk);
 
-            foreach($dummyModelChunk as $dummyModel) {
-                if($dummyModel->id === 1) {
+            foreach ($dummyModelChunk as $dummyModel) {
+                if ($dummyModel->id === 1) {
                     return [$dummyModel];
                 }
             }
@@ -164,6 +163,5 @@ class ActiveQueryChunkerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $results);
         $this->assertEquals(1, $results[0]->id);
-
     }
 }
