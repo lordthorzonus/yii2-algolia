@@ -4,13 +4,16 @@ namespace leinonen\Yii2Algolia\Tests\Unit;
 
 use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
+use leinonen\Yii2Algolia\SearchableInterface;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 use Mockery as m;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 
 class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,30 +52,34 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getIndices')->andReturn(['test']);
         $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
         $testModel->shouldReceive('getObjectID')->andReturn(1);
-
-        $mockActiveQuery = m::mock(ActiveQuery::class);
-        $mockActiveQuery->shouldReceive('all')->andReturn([$testModel]);
-
-        $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
-
-        $mockIndex = m::mock(Index::class);
-        $mockIndex->indexName = 'test';
-        $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
-
-        $mockTemporaryIndex = m::mock(Index::class);
-        $mockTemporaryIndex->indexName = 'tmp_test';
-        $mockTemporaryIndex->shouldReceive('addObjects')->with([['property1' => 'test', 'objectID' => 1]]);
-        $mockTemporaryIndex->shouldReceive('setSettings')->with(['setting1' => 'value1']);
-
-        $mockAlgoliaClient = m::mock(Client::class);
-        $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_test')->andReturn($mockTemporaryIndex);
-        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
-        $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_test', 'test']);
+        $expectedTestModelAlgoliaRecord = ['property1' => 'test', 'objectID' => 1];
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
         $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
 
-        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
+        $mockActiveQuery = m::mock(ActiveQuery::class);
+        $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
+
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, $testModel, $expectedTestModelAlgoliaRecord);
+
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'test';
+        $mockTemporaryIndex = m::mock(Index::class);
+        $mockTemporaryIndex->indexName = 'tmp_test';
+
+        // Assert that the actual indexing happens
+        $mockTemporaryIndex->shouldReceive('addObjects')->with([['property1' => 'test', 'objectID' => 1]])->once();
+
+        // Settings should stay the same during the atomical move
+        $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
+        $mockTemporaryIndex->shouldReceive('setSettings')->with(['setting1' => 'value1']);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_test')->once()->andReturn($mockTemporaryIndex);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->once()->andReturn($mockIndex);
+        $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_test', 'test']);
+
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, $mockActiveQueryChunker);
         $manager->reindex(DummyActiveRecordModel::class);
     }
 
@@ -195,7 +202,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient->shouldReceive('initIndex')->with('dev_dummyIndex')->times(3)->andReturn($mockIndex);
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
-        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, 'dev');
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, null, 'dev');
 
         $manager->updateInIndices($dummyModel);
         $manager->removeFromIndices($dummyModel);
@@ -209,11 +216,15 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getIndices')->andReturn(['test']);
         $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
         $testModel->shouldReceive('getObjectID')->andReturn(1);
+        $expectedTestModelAlgoliaRecord = ['property1' => 'test', 'objectID' => 1];
 
         $mockActiveQuery = m::mock(ActiveQuery::class);
         $mockActiveQuery->shouldReceive('all')->andReturn([$testModel]);
 
+        $mockActiveQuery = m::mock(ActiveQuery::class);
         $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
+
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, $testModel, $expectedTestModelAlgoliaRecord);
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->indexName = 'dev_test';
@@ -232,7 +243,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
         $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
 
-        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory,'dev');
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, $mockActiveQueryChunker, 'dev');
         $manager->reindex(DummyActiveRecordModel::class);
     }
 
@@ -257,7 +268,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $manager = $this->getManager($mockAlgoliaClient, null);
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->pushMultipleToIndices($arrayOfTestModels);
     }
 
@@ -282,7 +293,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $manager = $this->getManager($mockAlgoliaClient, null);
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->updateMultipleInIndices($arrayOfTestModels);
     }
 
@@ -306,7 +317,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $manager = $this->getManager($mockAlgoliaClient, null);
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->updateMultipleInIndices([$testModel, $testModel2]);
     }
 
@@ -330,7 +341,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
 
-        $manager = $this->getManager($mockAlgoliaClient, null);
+        $manager = $this->getManager($mockAlgoliaClient);
         $manager->pushMultipleToIndices([$testModel, $testModel2]);
     }
 
@@ -339,19 +350,58 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
      *
      * @param Client $client
      * @param null|ActiveRecordFactory $activeRecordFactory
+     * @param null|ActiveQuery $activeQueryChunker
      * @param null|string $env
      *
      * @return AlgoliaManager
      */
-    protected function getManager($client, $activeRecordFactory = null, $env = null)
+    private function getManager($client, $activeRecordFactory = null, $activeQueryChunker = null, $env = null)
     {
         if ($activeRecordFactory === null) {
             $activeRecordFactory = m::mock(ActiveRecordFactory::class);
         }
 
-        $manager = new AlgoliaManager($client, $activeRecordFactory);
+        if($activeQueryChunker === null) {
+            $activeQueryChunker = m::mock(ActiveQueryChunker::class);
+        }
+
+        $manager = new AlgoliaManager($client, $activeRecordFactory, $activeQueryChunker);
         $manager->setEnv($env);
 
         return $manager;
+    }
+
+    /**
+     * Returns a mock of the ActiveQuery chunker with expectations for the reindex operation.
+     *
+     * @param m\MockInterface $mockActiveQuery The ActiveQuery
+     * @param SearchableInterface $testModel
+     * @param array $expectedTestModelAlgoliaRecord
+     *
+     * @return ActiveQueryChunker
+     */
+    private function mockActiveQueryChunkingForReindex($mockActiveQuery, $testModel, $expectedTestModelAlgoliaRecord)
+    {
+        $mockActiveQueryChunker = m::mock(ActiveQueryChunker::class);
+
+        // Mock the chunk and assert that the given closure works as expected
+        $mockActiveQueryChunker->shouldReceive('chunk')->withArgs(
+            [
+                $mockActiveQuery,
+                500,
+                m::on(function ($closure) use ($testModel, $expectedTestModelAlgoliaRecord) {
+
+                    // The closure receives an array of a testModel as the result of chunking
+                    // and it should convert it into a proper array of Algolia indexable records.
+                    // We'll only test the first chunk as the it confirms if the closure works as expected.
+                    $closureResult = $closure([$testModel]);
+                    $this->assertEquals([$expectedTestModelAlgoliaRecord], $closureResult);
+
+                    return is_callable($closure);
+                })
+            ]
+        )->andReturn([$expectedTestModelAlgoliaRecord]);
+
+        return $mockActiveQueryChunker;
     }
 }

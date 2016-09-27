@@ -218,6 +218,9 @@ You can also use the static method on ActiveRecord class if you prefer Yii's sty
 Contact::reindex();
 ```
  
+ In background reindexing is done by chunking through all of the ActiveRecord models of the given class, 500 objects at time. 
+ This means you can safely use reindexing even over really large datasets without consuming too much memory. Just mind your Algolia quota.
+ 
 ####Clearing Indices
 To clear indices where the ActiveRecord is synced to, use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 

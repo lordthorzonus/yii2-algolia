@@ -4,7 +4,9 @@ namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
+use yii\db\ActiveQuery;
 
 /**
  * @method setConnectTimeout(int $connectTimeout, int $timeout = 30, int $searchTimeout = 5)
@@ -62,16 +64,22 @@ class AlgoliaManager
     protected $env;
 
     /**
+     * @var ActiveQueryChunker
+     */
+    private $activeQueryChunker;
+
+    /**
      * Initiates a new AlgoliaManager.
      *
      * @param Client $client
      * @param ActiveRecordFactory $activeRecordFactory
-     *
+     * @param ActiveQueryChunker $activeQueryChunker
      */
-    public function __construct(Client $client, ActiveRecordFactory $activeRecordFactory)
+    public function __construct(Client $client, ActiveRecordFactory $activeRecordFactory, ActiveQueryChunker $activeQueryChunker)
     {
         $this->client = $client;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->activeQueryChunker = $activeQueryChunker;
     }
 
     /**
@@ -133,7 +141,9 @@ class AlgoliaManager
      */
     public function pushMultipleToIndices(array $searchableModels)
     {
-        list($indices, $algoliaRecords) = $this->getIndicesAndAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $algoliaRecords = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $indices = $this->initIndices($searchableModels[0]);
+
         $response = [];
 
         foreach ($indices as $index) {
@@ -174,7 +184,9 @@ class AlgoliaManager
      */
     public function updateMultipleInIndices(array $searchableModels)
     {
-        list($indices, $algoliaRecords) = $this->getIndicesAndAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $algoliaRecords = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $indices = $this->initIndices($searchableModels[0]);
+
         $response = [];
 
         foreach ($indices as $index) {
@@ -209,7 +221,7 @@ class AlgoliaManager
     /**
      * Re-indexes the indices safely for the given ActiveRecord Class.
      *
-     * @param string $className The name of the ActiveRecord to be indexed.
+     * @param string $className The name of the ActiveRecord to be indexed
      *
      * @return array
      */
@@ -217,20 +229,17 @@ class AlgoliaManager
     {
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);
+        $indices = $this->initIndices($activeRecord);
+
+        $records =  $this->activeQueryChunker->chunk(
+            $activeRecord->find(),
+            500,
+            function ($activeRecordEntities) {
+                return $this->getAlgoliaRecordsFromSearchableModelArray($activeRecordEntities);
+            }
+        );
+
         $response = [];
-
-        /** @var SearchableInterface[] $activeRecordEntities */
-        $activeRecordEntities = $activeRecord->find()->all();
-
-        /* @var SearchableInterface $activeRecord */
-        $indices = $indices = $this->initIndices($activeRecord);
-        $records = [];
-
-        foreach ($activeRecordEntities as $activeRecordEntity) {
-            $record = $activeRecordEntity->getAlgoliaRecord();
-            $record['objectID'] = $activeRecordEntity->getObjectID();
-            $records[] = $record;
-        }
 
         foreach ($indices as $index) {
             $temporaryIndexName = 'tmp_' . $index->indexName;
@@ -242,7 +251,7 @@ class AlgoliaManager
             $settings = $index->getSettings();
 
             // Temporary index overrides all the settings on the main one.
-            // So let's set the original settings on the temporary one before atomically moving the index.
+            // So we need to set the original settings on the temporary one before atomically moving the index.
             $temporaryIndex->setSettings($settings);
 
             $response[$index->indexName] = $this->moveIndex($temporaryIndexName, $index->indexName);
@@ -324,18 +333,16 @@ class AlgoliaManager
     }
 
     /**
-     * Maps an array of searchable models into an Algolia friendly array. Returns also indices for the searchable model
-     * which the array consists of.
+     * Maps an array of searchable models into an Algolia friendly array.
      *
      * @param SearchableInterface[] $searchableModels
      *
      * @return array
      */
-    private function getIndicesAndAlgoliaRecordsFromSearchableModelArray(array $searchableModels)
+    private function getAlgoliaRecordsFromSearchableModelArray(array $searchableModels)
     {
         // Use the first element of the array to define what kind of models we are indexing.
         $arrayType = get_class($searchableModels[0]);
-        $indices = $this->initIndices($searchableModels[0]);
 
         $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
             if (! $searchableModel instanceof $arrayType) {
@@ -348,6 +355,6 @@ class AlgoliaManager
             return $algoliaRecord;
         }, $searchableModels);
 
-        return [$indices, $algoliaRecords];
+        return $algoliaRecords;
     }
 }

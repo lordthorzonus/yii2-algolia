@@ -15,28 +15,36 @@ class ActiveQueryChunker
      * @param int $size The size of chunk retrieved from the query.
      * @param callable $callback
      *
-     * @return bool
+     * @return array
      */
     public function chunk(ActiveQueryInterface $query, $size, callable $callback)
     {
         $pageNumber = 1;
-        $results = $this->paginateResults($query, $pageNumber, $size)->all();
+        $records = $this->paginateRecords($query, $pageNumber, $size)->all();
+        $results = [];
 
-        while(count($results) > 0)
+        while(count($records) > 0)
         {
-            // On each chunk, pass the results to the callback and then let the
+            // On each chunk, pass the records to the callback and then let the
             // developer take care of everything within the callback. This allows to
             // keep the memory low when looping through large result sets.
-            if (call_user_func($callback, $results) === false) {
-                return false;
+            $callableResults = call_user_func($callback, $records);
+
+            if ($callableResults === false) {
+                break;
+            }
+
+            // If the results of the given callable function were an array
+            // merge them into the result array which is returned at the end of the chunking.
+            if(is_array($callableResults)) {
+                $results = array_merge($results, $callableResults);
             }
 
             $pageNumber++;
-
-            $results = $this->paginateResults($query, $pageNumber, $size)->all();
+            $records = $this->paginateRecords($query, $pageNumber, $size)->all();
         }
 
-        return true;
+        return $results;
     }
 
     /**
@@ -48,7 +56,7 @@ class ActiveQueryChunker
      *
      * @return ActiveQueryInterface
      */
-    private function paginateResults(ActiveQueryInterface $query, $pageNumber, $count)
+    private function paginateRecords(ActiveQueryInterface $query, $pageNumber, $count)
     {
         $offset = ($pageNumber - 1) *  $count;
         $limit = $count;

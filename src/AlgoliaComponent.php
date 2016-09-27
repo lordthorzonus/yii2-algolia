@@ -4,6 +4,7 @@ namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
 use InvalidArgumentException;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use yii\base\Application;
@@ -90,16 +91,27 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     private $activeRecordFactory;
 
     /**
+     * @var ActiveQueryChunker
+     */
+    private $activeQueryChunker;
+
+    /**
      * Initiates a new AlgoliaComponent.
      *
      * @param AlgoliaFactory $algoliaFactory
      * @param ActiveRecordFactory $activeRecordFactory
+     * @param ActiveQueryChunker $activeQueryChunker
      * @param array $config
      */
-    public function __construct(AlgoliaFactory $algoliaFactory, ActiveRecordFactory $activeRecordFactory, $config = [])
-    {
+    public function __construct(
+        AlgoliaFactory $algoliaFactory,
+        ActiveRecordFactory $activeRecordFactory,
+        ActiveQueryChunker $activeQueryChunker,
+        $config = []
+    ) {
         $this->algoliaFactory = $algoliaFactory;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->activeQueryChunker = $activeQueryChunker;
 
         parent::__construct($config);
     }
@@ -134,7 +146,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
         $config = $this->generateConfig();
         $client = $this->algoliaFactory->make($config);
 
-        $algoliaManager = new AlgoliaManager($client, $this->activeRecordFactory);
+        $algoliaManager = new AlgoliaManager($client, $this->activeRecordFactory, $this->activeQueryChunker);
         $algoliaManager->setEnv($this->env);
 
         return $algoliaManager;
