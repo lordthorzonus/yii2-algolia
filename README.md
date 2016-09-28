@@ -231,7 +231,7 @@ Contact::reindex();
 #####Reindexing By ActiveQuery
  If you need to index a lot of related relationships to Algolia you can use the powerful `reindexByActiveQuery()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
  ```php
- $contactsQuery = Contact::find()->joinWith('company')->where('company_name' => 'Algolia']);
+ $contactsQuery = Contact::find()->joinWith('company')->where(['company_name' => 'Algolia']);
  $manager->reindexByActiveQuery($contactsQuery);
  ```   
  
@@ -252,7 +252,7 @@ Contact::reindex();
     {
         $record = $this->toArray();
         
-        if($this->isRelationPopulated('company') {
+        if($this->isRelationPopulated('company')) {
             $record['company'] = $this->company->toArray();
         }
         
@@ -267,7 +267,7 @@ Contact::reindex();
  $contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
  $manager->reindexOnly($contacts);
  ```
-In the background the method figures out the indices of that need to be reindexed therefore the array must consist only models of a same class. Be wary of the memory consumption if you are fetching a lot of ActiveRecords this way.
+In the background the method figures out the indices of that need to be reindexed and therefore the array must consist only models of a same class. Be wary of the memory consumption if you are fetching a lot of ActiveRecords this way.
  
  
  
