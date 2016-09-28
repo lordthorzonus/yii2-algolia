@@ -17,7 +17,7 @@ First, install the dependencies:
 composer install
 ```
 
-You need to configure the `phpunit.xml` with your algolia keys for running the integration tests:
+You need to also configure the `phpunit.xml` with your Algolia keys for running the integration tests:
 ```xml
 <php>
     <env name="ALGOLIA_ID" value="id" />
@@ -32,6 +32,6 @@ Then run phpunit:
 php vendor/phpunit/phpunit/phpunit
 ```
 
-If the test suite passes on your local machine you should be good to go.
+If the test suites pass on your local machine you should be good to go.
 
 When you make a pull request, the tests will automatically be run again by [Travis CI](https://travis-ci.org/) on multiple php versions.
