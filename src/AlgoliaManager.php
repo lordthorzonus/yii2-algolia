@@ -245,19 +245,7 @@ class AlgoliaManager
         $response = [];
 
         foreach ($indices as $index) {
-            $temporaryIndexName = 'tmp_' . $index->indexName;
-
-            /** @var Index $temporaryIndex */
-            $temporaryIndex = $this->initIndex($temporaryIndexName);
-            $temporaryIndex->addObjects($records);
-
-            $settings = $index->getSettings();
-
-            // Temporary index overrides all the settings on the main one.
-            // So we need to set the original settings on the temporary one before atomically moving the index.
-            $temporaryIndex->setSettings($settings);
-
-            $response[$index->indexName] = $this->moveIndex($temporaryIndexName, $index->indexName);
+            $response[$index->indexName] = $this->reindexAtomically($index, $records);
         }
 
         return $response;
@@ -359,5 +347,29 @@ class AlgoliaManager
         }, $searchableModels);
 
         return $algoliaRecords;
+    }
+
+    /**
+     * Reindex atomically the given index with the given records.
+     *
+     * @param Index $index
+     * @param array $algoliaRecords
+     *
+     * @return mixed
+     */
+    private function reindexAtomically(Index $index, array $algoliaRecords)
+    {
+        $temporaryIndexName = 'tmp_' . $index->indexName;
+
+        $temporaryIndex = $this->initIndex($temporaryIndexName);
+        $temporaryIndex->addObjects($algoliaRecords);
+
+        $settings = $index->getSettings();
+
+        // Temporary index overrides all the settings on the main one.
+        // So we need to set the original settings on the temporary one before atomically moving the index.
+        $temporaryIndex->setSettings($settings);
+
+        return $this->moveIndex($temporaryIndexName, $index->indexName);
     }
 }
