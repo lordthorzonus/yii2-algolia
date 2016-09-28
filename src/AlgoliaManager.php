@@ -6,6 +6,7 @@ use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
+use yii\db\ActiveQueryInterface;
 
 /**
  * @method setConnectTimeout(int $connectTimeout, int $timeout = 30, int $searchTimeout = 5)
@@ -37,6 +38,11 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
  */
 class AlgoliaManager
 {
+    /**
+     * Size for the chunks used in reindexing methods
+     */
+     const CHUNK_SIZE = 500;
+
     /**
      * @var AlgoliaFactory
      */
@@ -260,7 +266,7 @@ class AlgoliaManager
 
         $records = $this->activeQueryChunker->chunk(
             $activeRecord->find(),
-            500,
+            self::CHUNK_SIZE,
             function ($activeRecordEntities) {
                 return $this->getAlgoliaRecordsFromSearchableModelArray($activeRecordEntities);
             }
@@ -290,6 +296,43 @@ class AlgoliaManager
     {
         $records = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
         $indices = $this->initIndices($searchableModels[0]);
+
+        $response = [];
+
+        foreach ($indices as $index) {
+            $response[$index->indexName] = $this->reindexAtomically($index, $records);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Re-indexes the related indices for the given ActiveQueryInterface.
+     * The result of the given ActiveQuery must consist from Searchable models of the same class.
+     *
+     * @param ActiveQueryInterface $activeQuery
+     *
+     * @return array
+     */
+    public function reindexByActiveQuery(ActiveQueryInterface $activeQuery)
+    {
+        $indices = null;
+
+        $records = $this->activeQueryChunker->chunk(
+            $activeQuery,
+            self::CHUNK_SIZE,
+            function ($activeRecordEntities) use (&$indices){
+                $records = $this->getAlgoliaRecordsFromSearchableModelArray($activeRecordEntities);
+
+                // The converting ActiveRecords to Algolia ones already does the type checking
+                // so it's safe to init indices here during the first chunk.
+                if($indices === null) {
+                    $indices = $this->initIndices($activeRecordEntities[0]);
+                }
+
+                return $records;
+            }
+        );
 
         $response = [];
 
@@ -382,6 +425,10 @@ class AlgoliaManager
      */
     private function getAlgoliaRecordsFromSearchableModelArray(array $searchableModels)
     {
+        if(empty($searchableModels)) {
+            throw new \InvalidArgumentException('The given array should not be empty');
+        }
+
         // Use the first element of the array to define what kind of models we are indexing.
         $arrayType = get_class($searchableModels[0]);
 
