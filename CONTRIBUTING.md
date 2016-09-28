@@ -9,7 +9,7 @@ Contributions are very welcome, and are accepted via pull requests. Please revie
 
 ## Running Tests
 
-You will need an install of [Composer](https://getcomposer.org) before continuing. Yii2 also unfortunately needs you to install `fxp/composer-asset-plugin`.
+You will need an install of [Composer](https://getcomposer.org) before continuing. Yii2 also unfortunately requires you to install `fxp/composer-asset-plugin`.
 
 ```bash
 composer global require "fxp/composer-asset-plugin:^1.2.0"
