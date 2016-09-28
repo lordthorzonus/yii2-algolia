@@ -204,7 +204,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TypeError
+     * @expectedException \Exception
      */
     public function it_should_throw_an_exception_if_non_searchable_models_are_returned_from_active_query_in_reindexByActiveQuery()
     {
@@ -239,7 +239,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TypeError
+     * @expectedException \Exception
      */
     public function it_should_throw_an_exception_if_the_given_objects_for_reindexOnly_dont_implement_searchable_interface()
     {
@@ -515,7 +515,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @
-     * @expectedException \TypeError
+     * @expectedException \Exception
      */
     public function it_should_throw_an_exception_if_the_given_objects_for_updating_in_batch_dont_implement_searchable_interface()
     {
@@ -579,7 +579,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TypeError
+     * @expectedException \Exception
      */
     public function it_should_throw_an_exception_if_the_given_objects_for_indexing_in_batch_dont_implement_searchable_interface()
     {
@@ -618,7 +618,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \TypeError
+     * @expectedException \Exception
      */
     public function it_should_throw_an_exception_if_the_given_objects_for_deleting_in_batch_dont_implement_searchable_interface()
     {
