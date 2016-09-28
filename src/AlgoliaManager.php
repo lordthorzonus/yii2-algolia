@@ -39,8 +39,8 @@ use yii\db\ActiveQueryInterface;
 class AlgoliaManager
 {
     /**
-     * Size for the chunks used in reindexing methods
-     */
+      * Size for the chunks used in reindexing methods.
+      */
      const CHUNK_SIZE = 500;
 
     /**
@@ -272,7 +272,7 @@ class AlgoliaManager
             }
         );
 
-        /** @var SearchableInterface $activeRecord */
+        /* @var SearchableInterface $activeRecord */
         $indices = $this->initIndices($activeRecord);
         $response = [];
 
@@ -321,12 +321,12 @@ class AlgoliaManager
         $records = $this->activeQueryChunker->chunk(
             $activeQuery,
             self::CHUNK_SIZE,
-            function ($activeRecordEntities) use (&$indices){
+            function ($activeRecordEntities) use (&$indices) {
                 $records = $this->getAlgoliaRecordsFromSearchableModelArray($activeRecordEntities);
 
                 // The converting ActiveRecords to Algolia ones already does the type checking
                 // so it's safe to init indices here during the first chunk.
-                if($indices === null) {
+                if ($indices === null) {
                     $indices = $this->initIndices($activeRecordEntities[0]);
                 }
 
@@ -425,7 +425,7 @@ class AlgoliaManager
      */
     private function getAlgoliaRecordsFromSearchableModelArray(array $searchableModels)
     {
-        if(empty($searchableModels)) {
+        if (empty($searchableModels)) {
             throw new \InvalidArgumentException('The given array should not be empty');
         }
 

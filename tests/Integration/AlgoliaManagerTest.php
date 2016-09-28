@@ -58,7 +58,7 @@ class AlgoliaManagerTest extends TestCase
         $index->waitTask($pushResponse[$indexName]['taskID']);
 
         $this->assertArrayHasKey('objectIDs', $pushResponse[$index->indexName]);
-        $this->assertEquals(["1", "2"], $pushResponse[$index->indexName]['objectIDs']);
+        $this->assertEquals(['1', '2'], $pushResponse[$index->indexName]['objectIDs']);
 
         $searchResult = $index->search('otherProperty');
 
@@ -105,7 +105,7 @@ class AlgoliaManagerTest extends TestCase
         $index->waitTask($updateResponse[$index->indexName]['taskID']);
 
         $this->assertArrayHasKey('objectIDs', $updateResponse[$index->indexName]);
-        $this->assertEquals(["1", "2"], $updateResponse[$index->indexName]['objectIDs']);
+        $this->assertEquals(['1', '2'], $updateResponse[$index->indexName]['objectIDs']);
 
         $searchResult = $index->search('A new text for property');
 
@@ -121,7 +121,7 @@ class AlgoliaManagerTest extends TestCase
         $dummyObject1 = $this->getDummyActiveRecord($objectID);
 
         $deleteResponse = $this->algoliaManager->removeFromIndices($dummyObject1);
-        $this->assertArrayHasKey('deletedAt',$deleteResponse[$index->indexName]);
+        $this->assertArrayHasKey('deletedAt', $deleteResponse[$index->indexName]);
 
         $index->waitTask($deleteResponse[$index->indexName]['taskID']);
         $searchResult = $index->search('test');
@@ -145,7 +145,7 @@ class AlgoliaManagerTest extends TestCase
         $deleteResponse = $this->algoliaManager->removeMultipleFromIndices([$dummyObject1, $dummyObject2]);
 
         $this->assertArrayHasKey('objectIDs', $deleteResponse[$index->indexName]);
-        $this->assertEquals(["1", "2"], $deleteResponse[$index->indexName]['objectIDs']);
+        $this->assertEquals(['1', '2'], $deleteResponse[$index->indexName]['objectIDs']);
 
         $index->waitTask($deleteResponse[$index->indexName]['taskID']);
         $searchResult = $index->search('test');

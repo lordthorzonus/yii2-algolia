@@ -533,6 +533,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not contain multiple different classes
      */
