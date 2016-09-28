@@ -28,5 +28,10 @@
         "psr-4": {
             "leinonen\\Yii2Algolia\\Tests\\": "tests/"
         }
+    },
+    "scripts" : {
+        "post-install-cmd" : [
+            "cp -n phpunit.xml.dist phpunit.xml"
+        ]
     }
 }

@@ -25,7 +25,7 @@ Table of contents
     * [Clearing Indices](#clearing-indices)
     * [Auto-indexing](#auto-indexing)
 * [Using multiple environments](#using-multiple-environments) 
-    
+* [Contributing](#contributing)
 
 ## Installation
 Require this package, with [Composer](https://getcomposer.org/), in the root directory of your project.
@@ -344,3 +344,6 @@ use leinonen\Yii2Algolia\AlgoliaComponent;
 ],
 ```
 Then when using any of the helpers methods from `leinonen\Yii2Algolia\AlgoliaManager` the environment will be prefixed to the index name. Also using the helper methods found on `leinonen\Yii2Algolia\Searchable` trait will work. **Note if you use methods straight from [The Official Algolia Client](https://github.com/algolia/algoliasearch-client-php) the env config will have no effect.** 
+
+## Contributing
+Pull requests are welcome! Have a look at the [CONTRIBUTING.md](https://github.com/lordthorzonus/yii2-algolia/blob/master/CONTRIBUTING.md) document for some instructions.
