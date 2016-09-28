@@ -57,6 +57,9 @@ class AlgoliaManagerTest extends TestCase
         $index = $this->algoliaManager->initIndex($indexName);
         $index->waitTask($pushResponse[$indexName]['taskID']);
 
+        $this->assertArrayHasKey('objectIDs', $pushResponse[$index->indexName]);
+        $this->assertEquals(["1", "2"], $pushResponse[$index->indexName]['objectIDs']);
+
         $searchResult = $index->search('otherProperty');
 
         $this->deleteIndex($index);
@@ -66,12 +69,18 @@ class AlgoliaManagerTest extends TestCase
     /** @test */
     public function it_can_update_an_existing_searchable_object()
     {
-        $index = $this->addDummyObjectToIndex();
-        $dummyObject = $this->getDummyActiveRecord();
+        $objectId = 1;
+
+        $index = $this->addDummyObjectToIndex($objectId);
+        $dummyObject = $this->getDummyActiveRecord($objectId);
         $dummyObject->otherProperty = 'A new text for property';
 
         $updateResponse = $this->algoliaManager->updateInIndices($dummyObject);
         $index->waitTask($updateResponse[$index->indexName]['taskID']);
+
+        $this->assertArrayHasKey('objectID', $updateResponse[$index->indexName]);
+        $this->assertArrayHasKey('updatedAt', $updateResponse[$index->indexName]);
+        $this->assertEquals("{$objectId}", $updateResponse[$index->indexName]['objectID']);
 
         $searchResult = $index->search('A new text for property');
 
@@ -94,6 +103,9 @@ class AlgoliaManagerTest extends TestCase
 
         $updateResponse = $this->algoliaManager->updateMultipleInIndices([$dummyObject1, $dummyObject2]);
         $index->waitTask($updateResponse[$index->indexName]['taskID']);
+
+        $this->assertArrayHasKey('objectIDs', $updateResponse[$index->indexName]);
+        $this->assertEquals(["1", "2"], $updateResponse[$index->indexName]['objectIDs']);
 
         $searchResult = $index->search('A new text for property');
 
@@ -131,7 +143,9 @@ class AlgoliaManagerTest extends TestCase
         $dummyObject2 = $this->getDummyActiveRecord($objectID2);
 
         $deleteResponse = $this->algoliaManager->removeMultipleFromIndices([$dummyObject1, $dummyObject2]);
-        $this->assertArrayHasKey('deletedAt',$deleteResponse[$index->indexName]);
+
+        $this->assertArrayHasKey('objectIDs', $deleteResponse[$index->indexName]);
+        $this->assertEquals(["1", "2"], $deleteResponse[$index->indexName]['objectIDs']);
 
         $index->waitTask($deleteResponse[$index->indexName]['taskID']);
         $searchResult = $index->search('test');
@@ -183,6 +197,10 @@ class AlgoliaManagerTest extends TestCase
         $indexName = $searchableObject->getIndices()[0];
 
         $pushResponse = $this->algoliaManager->pushToIndices($searchableObject);
+
+        $this->assertArrayHasKey('objectID', $pushResponse[$indexName]);
+        $this->assertArrayHasKey('updatedAt', $pushResponse[$indexName]);
+        $this->assertEquals("{$objectId}", $pushResponse[$indexName]['objectID']);
 
         $index = $this->algoliaManager->initIndex($indexName);
         $index->waitTask($pushResponse[$indexName]['taskID']);
