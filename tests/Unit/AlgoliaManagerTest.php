@@ -204,24 +204,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Exception
-     */
-    public function it_should_throw_an_exception_if_non_searchable_models_are_returned_from_active_query_in_reindexByActiveQuery()
-    {
-        $testModel1 = m::mock(NotSearchableDummyModel::class);
-
-        $mockActiveQuery = m::mock(ActiveQuery::class);
-        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel1], null);
-
-        $mockAlgoliaClient = m::mock(Client::class);
-
-        $manager = $this->getManager($mockAlgoliaClient, null, $mockActiveQueryChunker);
-
-        $manager->reindexByActiveQuery($mockActiveQuery);
-    }
-
-    /**
-     * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not be empty
      */
@@ -235,20 +217,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient, null, $mockActiveQueryChunker);
 
         $manager->reindexByActiveQuery($mockActiveQuery);
-    }
-
-    /**
-     * @test
-     * @expectedException \Exception
-     */
-    public function it_should_throw_an_exception_if_the_given_objects_for_reindexOnly_dont_implement_searchable_interface()
-    {
-        $testModel = m::mock(NotSearchableDummyModel::class);
-
-        $mockAlgoliaClient = m::mock(Client::class);
-        $manager = $this->getManager($mockAlgoliaClient);
-
-        $manager->reindexOnly([$testModel]);
     }
 
     /**
@@ -514,20 +482,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @
-     * @expectedException \Exception
-     */
-    public function it_should_throw_an_exception_if_the_given_objects_for_updating_in_batch_dont_implement_searchable_interface()
-    {
-        $testModel = m::mock(NotSearchableDummyModel::class);
-
-        $mockAlgoliaClient = m::mock(Client::class);
-        $manager = $this->getManager($mockAlgoliaClient);
-
-        $manager->updateMultipleInIndices([$testModel]);
-    }
-
-    /**
      * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not be empty
@@ -579,21 +533,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Exception
-     */
-    public function it_should_throw_an_exception_if_the_given_objects_for_indexing_in_batch_dont_implement_searchable_interface()
-    {
-        $testModel = m::mock(NotSearchableDummyModel::class);
-
-        $mockAlgoliaClient = m::mock(Client::class);
-        $manager = $this->getManager($mockAlgoliaClient);
-
-        $manager->pushMultipleToIndices([$testModel]);
-    }
-
-
-    /**
-     * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not contain multiple different classes
      */
@@ -614,20 +553,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getManager($mockAlgoliaClient);
         $manager->removeMultipleFromIndices([$testModel, $testModel2]);
-    }
-
-    /**
-     * @test
-     * @expectedException \Exception
-     */
-    public function it_should_throw_an_exception_if_the_given_objects_for_deleting_in_batch_dont_implement_searchable_interface()
-    {
-        $testModel = m::mock(NotSearchableDummyModel::class);
-
-        $mockAlgoliaClient = m::mock(Client::class);
-        $manager = $this->getManager($mockAlgoliaClient);
-
-        $manager->removeMultipleFromIndices([$testModel]);
     }
 
     /**
