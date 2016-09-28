@@ -205,7 +205,7 @@ class AlgoliaManager
      * @param SearchableInterface $searchableModel
      *
      * @return array
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function removeFromIndices(SearchableInterface $searchableModel)
     {
@@ -226,7 +226,7 @@ class AlgoliaManager
      * @param array $searchableModels
      *
      * @return array
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function removeMultipleFromIndices(array $searchableModels)
     {
@@ -257,7 +257,6 @@ class AlgoliaManager
     {
         $this->checkImplementsSearchableInterface($className);
         $activeRecord = $this->activeRecordFactory->make($className);
-        $indices = $this->initIndices($activeRecord);
 
         $records = $this->activeQueryChunker->chunk(
             $activeRecord->find(),
@@ -266,6 +265,31 @@ class AlgoliaManager
                 return $this->getAlgoliaRecordsFromSearchableModelArray($activeRecordEntities);
             }
         );
+
+        /** @var SearchableInterface $activeRecord */
+        $indices = $this->initIndices($activeRecord);
+        $response = [];
+
+        foreach ($indices as $index) {
+            $response[$index->indexName] = $this->reindexAtomically($index, $records);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Re-indexes the related indices for the given array only with the objects from the given array.
+     * The given array must consist of Searchable objects of same class.
+     *
+     * @param SearchableInterface[] $searchableModels
+     *
+     * @throws \InvalidArgumentException
+     * @return array
+     */
+    public function reindexOnly(array $searchableModels)
+    {
+        $records = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $indices = $this->initIndices($searchableModels[0]);
 
         $response = [];
 
@@ -281,6 +305,7 @@ class AlgoliaManager
      *
      * @param string $className The name of the Class which indices are to be cleared.
      *
+     * @throws \InvalidArgumentException
      * @return array
      */
     public function clearIndices($className)

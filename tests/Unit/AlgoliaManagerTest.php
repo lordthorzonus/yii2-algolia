@@ -67,7 +67,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockTemporaryIndex->indexName = 'tmp_test';
 
         // Assert that the actual indexing happens
-        $mockTemporaryIndex->shouldReceive('addObjects')->with([['property1' => 'test', 'objectID' => 1]])->once();
+        $mockTemporaryIndex->shouldReceive('addObjects')->with([$expectedTestModelAlgoliaRecord])->once();
 
         // Settings should stay the same during the atomical move
         $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
@@ -82,12 +82,87 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager->reindex(DummyActiveRecordModel::class);
     }
 
+    /** @test */
+    public function it_can_reindex_the_index_also_with_an_array_of_explicitly_given_objects()
+    {
+        $testModel1 = m::mock(DummyActiveRecordModel::class);
+        $testModel1->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel1->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel1->shouldReceive('getObjectID')->andReturn(1);
+        $expectedTestModelAlgoliaRecord1 = ['property1' => 'test', 'objectID' => 1];
+
+        $testModel2 = m::mock(DummyActiveRecordModel::class);
+        $testModel2->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel2->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel2->shouldReceive('getObjectID')->andReturn(2);
+        $expectedTestModelAlgoliaRecord2 = ['property1' => 'test', 'objectID' => 2];
+
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'test';
+        $mockTemporaryIndex = m::mock(Index::class);
+        $mockTemporaryIndex->indexName = 'tmp_test';
+
+        // Assert that the actual indexing happens
+        $mockTemporaryIndex->shouldReceive('addObjects')->with([$expectedTestModelAlgoliaRecord1, $expectedTestModelAlgoliaRecord2])->once();
+
+        // Settings should stay the same during the atomical move
+        $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
+        $mockTemporaryIndex->shouldReceive('setSettings')->with(['setting1' => 'value1']);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('tmp_test')->once()->andReturn($mockTemporaryIndex);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->once()->andReturn($mockIndex);
+        $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_test', 'test']);
+
+        $manager = $this->getManager($mockAlgoliaClient);
+        $manager->reindexOnly([$testModel1, $testModel2]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The given array should not contain multiple different classes
+     */
+    public function it_should_throw_an_exception_if_multiple_different_kind_of_models_are_given_as_the_array()
+    {
+        $testModel1 = m::mock(DummyActiveRecordModel::class);
+        $testModel1->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel1->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel1->shouldReceive('getObjectID')->andReturn(1);
+
+        // This model should throw an exception
+        $testModel2 = m::mock(DummyModel::class);
+
+        $mockIndex = m::mock(Index::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
+
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->reindexOnly([$testModel1, $testModel2]);
+    }
+
+    /**
+     * @test
+     * @expectedException \TypeError
+     */
+    public function it_should_throw_an_exception_if_the_given_objects__for_reindexOnly_dont_implement_searchable_interface()
+    {
+        $testModel = m::mock(NotSearchableDummyModel::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->reindexOnly([$testModel]);
+    }
+
     /**
      * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
      */
-    public function it_should_throw_an_error_if_non_searchable_class_was_given_to_reIndex()
+    public function it_should_throw_an_error_if_non_searchable_class_was_given_to_reindex()
     {
         $mockAlgoliaClient = m::mock(Client::class);
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
@@ -349,6 +424,20 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \TypeError
+     */
+    public function it_should_throw_an_exception_if_the_given_objects_for_updating_in_batch_dont_implement_searchable_interface()
+    {
+        $testModel = m::mock(NotSearchableDummyModel::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->updateMultipleInIndices([$testModel]);
+    }
+
+    /**
+     * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not contain multiple different classes
      */
@@ -373,6 +462,21 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \TypeError
+     */
+    public function it_should_throw_an_exception_if_the_given_objects_for_indexing_in_batch_dont_implement_searchable_interface()
+    {
+        $testModel = m::mock(NotSearchableDummyModel::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->pushMultipleToIndices([$testModel]);
+    }
+
+
+    /**
+     * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not contain multiple different classes
      */
@@ -393,6 +497,20 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getManager($mockAlgoliaClient);
         $manager->removeMultipleFromIndices([$testModel, $testModel2]);
+    }
+
+    /**
+     * @test
+     * @expectedException \TypeError
+     */
+    public function it_should_throw_an_exception_if_the_given_objects_for_deleting_in_batch_dont_implement_searchable_interface()
+    {
+        $testModel = m::mock(NotSearchableDummyModel::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->removeMultipleFromIndices([$testModel]);
     }
 
     /**
