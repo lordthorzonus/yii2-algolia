@@ -67,7 +67,7 @@ class AlgoliaManagerTest extends TestCase
     public function it_can_update_an_existing_searchable_object()
     {
         $index = $this->addDummyObjectToIndex();
-        $dummyObject = $this->makeDummyActiveRecord();
+        $dummyObject = $this->getDummyActiveRecord();
         $dummyObject->otherProperty = 'A new text for property';
 
         $updateResponse = $this->algoliaManager->updateInIndices($dummyObject);
@@ -77,6 +77,67 @@ class AlgoliaManagerTest extends TestCase
 
         $this->deleteIndex($index);
         $this->assertCount(1, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_update_multiple_existing_searchable_objects()
+    {
+        $index = $this->addDummyObjectToIndex(1);
+        // This dummy object uses the same index so no need to get it from the method.
+        $this->addDummyObjectToIndex(2);
+
+        $dummyObject1 = $this->getDummyActiveRecord(1);
+        $dummyObject1->otherProperty = 'A new text for property';
+
+        $dummyObject2 = $this->getDummyActiveRecord(2);
+        $dummyObject2->otherProperty = 'A new text for property';
+
+        $updateResponse = $this->algoliaManager->updateMultipleInIndices([$dummyObject1, $dummyObject2]);
+        $index->waitTask($updateResponse[$index->indexName]['taskID']);
+
+        $searchResult = $index->search('A new text for property');
+
+        $this->deleteIndex($index);
+        $this->assertCount(2, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_remove_an_existing_searchable_object_from_indices()
+    {
+        $objectID = 1;
+        $index = $this->addDummyObjectToIndex($objectID);
+        $dummyObject1 = $this->getDummyActiveRecord($objectID);
+
+        $deleteResponse = $this->algoliaManager->removeFromIndices($dummyObject1);
+        $this->assertArrayHasKey('deletedAt',$deleteResponse[$index->indexName]);
+
+        $index->waitTask($deleteResponse[$index->indexName]['taskID']);
+        $searchResult = $index->search('test');
+
+        $this->deleteIndex($index);
+        $this->assertCount(0, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_remove_multiple_existing_searchable_objects_from_indices()
+    {
+        $objectID1 = 1;
+        $index = $this->addDummyObjectToIndex($objectID1);
+        $dummyObject1 = $this->getDummyActiveRecord($objectID1);
+
+        $objectID2 = 2;
+        // This dummy object uses the same index so no need to get it from the method.
+        $this->addDummyObjectToIndex($objectID2);
+        $dummyObject2 = $this->getDummyActiveRecord($objectID2);
+
+        $deleteResponse = $this->algoliaManager->removeMultipleFromIndices([$dummyObject1, $dummyObject2]);
+        $this->assertArrayHasKey('deletedAt',$deleteResponse[$index->indexName]);
+
+        $index->waitTask($deleteResponse[$index->indexName]['taskID']);
+        $searchResult = $index->search('test');
+
+        $this->deleteIndex($index);
+        $this->assertCount(0, $searchResult['hits']);
     }
 
     /** @test */
@@ -98,7 +159,7 @@ class AlgoliaManagerTest extends TestCase
 
         $algoliaManager = Yii::$container->get(AlgoliaManager::class);
 
-        $searchableObject = $this->makeDummyActiveRecord();
+        $searchableObject = $this->getDummyActiveRecord();
         $searchableObject->shouldReceive('getIndices')->andReturn(['index']);
 
         $pushResponse = $algoliaManager->pushToIndices($searchableObject);
@@ -112,11 +173,13 @@ class AlgoliaManagerTest extends TestCase
     /**
      * Creates one dummy object to a new index and asserts that it is successful.
      *
+     * @param int $objectId
+     *
      * @return \AlgoliaSearch\Index
      */
-    private function addDummyObjectToIndex()
+    private function addDummyObjectToIndex($objectId = 1)
     {
-        $searchableObject = $this->makeDummyActiveRecord();
+        $searchableObject = $this->getDummyActiveRecord($objectId);
         $indexName = $searchableObject->getIndices()[0];
 
         $pushResponse = $this->algoliaManager->pushToIndices($searchableObject);
@@ -162,7 +225,7 @@ class AlgoliaManagerTest extends TestCase
      *
      * @return SearchableInterface
      */
-    private function makeDummyActiveRecord($objectId = 1)
+    private function getDummyActiveRecord($objectId = 1)
     {
         // ActiveRecord needs to mocked because of the database.
         $searchableObject = m::mock(DummyActiveRecordModel::class);
