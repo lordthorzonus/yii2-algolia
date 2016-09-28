@@ -267,7 +267,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager->reindexOnly([$testModel]);
     }
 
-
     /**
      * @test
      * @expectedException \InvalidArgumentException
