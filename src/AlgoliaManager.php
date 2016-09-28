@@ -6,7 +6,6 @@ use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
-use yii\db\ActiveQuery;
 
 /**
  * @method setConnectTimeout(int $connectTimeout, int $timeout = 30, int $searchTimeout = 5)
@@ -260,7 +259,7 @@ class AlgoliaManager
         $activeRecord = $this->activeRecordFactory->make($className);
         $indices = $this->initIndices($activeRecord);
 
-        $records =  $this->activeQueryChunker->chunk(
+        $records = $this->activeQueryChunker->chunk(
             $activeRecord->find(),
             500,
             function ($activeRecordEntities) {

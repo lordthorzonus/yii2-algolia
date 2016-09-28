@@ -155,7 +155,7 @@ $contact->name = 'test';
 $manager->pushToIndices($contact);
 ```
 
-It's also possible to index multiple models of the same type in a batch with the service's `pushMultipleToIndices()`.
+It's also possible to index multiple models of the same class in a batch with the service's `pushMultipleToIndices()`.
 
 ```php
 $contact1 = new Contact();
@@ -202,7 +202,7 @@ $contact = Contact::findOne(['name' => 'test']);
 $manager->updateInIndices($contact);
 ```
 
-It's also possible to update multiple models of the same type in a batch with the service's `updateMultipleInIndices()`.
+It's also possible to update multiple models of the same class in a batch with the service's `updateMultipleInIndices()`.
 
 ```php
 $contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();

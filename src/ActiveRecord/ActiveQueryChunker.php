@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\ActiveRecord;
-
 
 use yii\db\ActiveQueryInterface;
 
@@ -23,8 +21,7 @@ class ActiveQueryChunker
         $records = $this->paginateRecords($query, $pageNumber, $size)->all();
         $results = [];
 
-        while(count($records) > 0)
-        {
+        while (count($records) > 0) {
             // On each chunk, pass the records to the callback and then let the
             // developer take care of everything within the callback. This allows to
             // keep the memory low when looping through large result sets.
@@ -36,7 +33,7 @@ class ActiveQueryChunker
 
             // If the results of the given callable function were an array
             // merge them into the result array which is returned at the end of the chunking.
-            if(is_array($callableResults)) {
+            if (is_array($callableResults)) {
                 $results = array_merge($results, $callableResults);
             }
 
@@ -58,7 +55,7 @@ class ActiveQueryChunker
      */
     private function paginateRecords(ActiveQueryInterface $query, $pageNumber, $count)
     {
-        $offset = ($pageNumber - 1) *  $count;
+        $offset = ($pageNumber - 1) * $count;
         $limit = $count;
 
         return $query->offset($offset)->limit($limit);
