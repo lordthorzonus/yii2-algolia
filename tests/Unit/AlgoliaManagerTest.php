@@ -591,7 +591,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager->pushMultipleToIndices([$testModel]);
     }
 
-
     /**
      * @test
      * @expectedException \InvalidArgumentException
