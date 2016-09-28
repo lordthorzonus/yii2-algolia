@@ -54,12 +54,18 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $expectedTestModelAlgoliaRecords = [['property1' => 'test', 'objectID' => 1]];
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
-        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
+        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn(
+            $testModel
+        );
 
         $mockActiveQuery = m::mock(ActiveQuery::class);
         $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
 
-        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel], $expectedTestModelAlgoliaRecords);
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex(
+            $mockActiveQuery,
+            [$testModel],
+            $expectedTestModelAlgoliaRecords
+        );
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->indexName = 'test';
@@ -93,7 +99,11 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $mockActiveQuery = m::mock(ActiveQuery::class);
 
-        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel], $expectedTestModelAlgoliaRecords);
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex(
+            $mockActiveQuery,
+            [$testModel],
+            $expectedTestModelAlgoliaRecords
+        );
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->indexName = 'test';
@@ -137,7 +147,9 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockTemporaryIndex->indexName = 'tmp_test';
 
         // Assert that the actual indexing happens
-        $mockTemporaryIndex->shouldReceive('addObjects')->with([$expectedTestModelAlgoliaRecord1, $expectedTestModelAlgoliaRecord2])->once();
+        $mockTemporaryIndex->shouldReceive('addObjects')->with(
+            [$expectedTestModelAlgoliaRecord1, $expectedTestModelAlgoliaRecord2]
+        )->once();
 
         // Settings should stay the same during the atomical move
         $mockIndex->shouldReceive('getSettings')->andReturn(['setting1' => 'value1']);
@@ -193,7 +205,11 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel2 = m::mock(DummyModel::class);
 
         $mockActiveQuery = m::mock(ActiveQuery::class);
-        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel1, $testModel2], null);
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex(
+            $mockActiveQuery,
+            [$testModel1, $testModel2],
+            null
+        );
 
         $mockAlgoliaClient = m::mock(Client::class);
 
@@ -224,6 +240,39 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
      */
+    public function it_should_throw_an_exception_if_non_searchable_models_are_returned_from_active_query_in_reindexByActiveQuery()
+    {
+        $testModel1 = new NotSearchableDummyModel();
+
+        $mockActiveQuery = m::mock(ActiveQuery::class);
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel1], null);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+
+        $manager = $this->getManager($mockAlgoliaClient, null, $mockActiveQueryChunker);
+
+        $manager->reindexByActiveQuery($mockActiveQuery);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     */
+    public function it_should_throw_an_exception_if_the_given_objects_for_reindexOnly_dont_implement_searchable_interface()
+    {
+        $testModel = new NotSearchableDummyModel();
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+        $manager->reindexOnly([$testModel]);
+    }
+
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     */
     public function it_should_throw_an_error_if_non_searchable_class_was_given_to_reindex()
     {
         $mockAlgoliaClient = m::mock(Client::class);
@@ -240,7 +289,10 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $testModel->shouldReceive('getIndices')->andReturn(['dummyIndex']);
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
-        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
+        $mockActiveRecordFactory->shouldReceive('make')
+            ->once()
+            ->with(DummyActiveRecordModel::class)
+            ->andReturn($testModel);
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->shouldReceive('clearIndex');
@@ -383,7 +435,11 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveQuery = m::mock(ActiveQuery::class);
         $testModel->shouldReceive('find')->andReturn($mockActiveQuery);
 
-        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel], $expectedTestModelAlgoliaRecord);
+        $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex(
+            $mockActiveQuery,
+            [$testModel],
+            $expectedTestModelAlgoliaRecord
+        );
 
         $mockIndex = m::mock(Index::class);
         $mockIndex->indexName = 'dev_test';
@@ -400,7 +456,10 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockAlgoliaClient->shouldReceive('moveIndex')->withArgs(['tmp_dev_test', 'dev_test']);
 
         $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
-        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyActiveRecordModel::class)->andReturn($testModel);
+        $mockActiveRecordFactory->shouldReceive('make')
+            ->once()
+            ->with(DummyActiveRecordModel::class)
+            ->andReturn($testModel);
 
         $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory, $mockActiveQueryChunker, 'dev');
 
@@ -423,7 +482,9 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $arrayOfTestModels = [$testModel, $testModel2];
 
         $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('addObjects')->once()->with([['property1' => 'test', 'objectID' => 1], ['property1' => 'test', 'objectID' => 2]]);
+        $mockIndex->shouldReceive('addObjects')->once()->with(
+            [['property1' => 'test', 'objectID' => 1], ['property1' => 'test', 'objectID' => 2]]
+        );
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
@@ -448,7 +509,9 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $arrayOfTestModels = [$testModel, $testModel2];
 
         $mockIndex = m::mock(Index::class);
-        $mockIndex->shouldReceive('saveObjects')->once()->with([['property1' => 'test', 'objectID' => 1], ['property1' => 'test', 'objectID' => 2]]);
+        $mockIndex->shouldReceive('saveObjects')->once()->with(
+            [['property1' => 'test', 'objectID' => 1], ['property1' => 'test', 'objectID' => 2]]
+        );
 
         $mockAlgoliaClient = m::mock(Client::class);
         $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
@@ -533,7 +596,19 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     */
+    public function it_should_throw_an_exception_if_the_given_objects_for_indexing_in_batch_dont_implement_searchable_interface()
+    {
+        $testModel = new NotSearchableDummyModel();
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+        $manager->pushMultipleToIndices([$testModel]);
+    }
 
+    /**
+     * @test
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The given array should not contain multiple different classes
      */
@@ -567,6 +642,19 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient);
 
         $manager->removeMultipleFromIndices([]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     */
+    public function it_should_throw_an_exception_if_the_given_objects_for_deleting_in_batch_dont_implement_searchable_interface()
+    {
+        $testModel = new NotSearchableDummyModel();
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+        $manager->removeMultipleFromIndices([$testModel]);
     }
 
     /**

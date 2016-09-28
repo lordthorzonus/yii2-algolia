@@ -431,6 +431,7 @@ class AlgoliaManager
 
         // Use the first element of the array to define what kind of models we are indexing.
         $arrayType = get_class($searchableModels[0]);
+        $this->checkImplementsSearchableInterface($arrayType);
 
         $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
             if (! $searchableModel instanceof $arrayType) {

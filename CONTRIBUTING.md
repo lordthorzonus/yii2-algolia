@@ -9,13 +9,18 @@ Contributions are very welcome, and are accepted via pull requests. Please revie
 
 ## Running Tests
 
-You will need an install of [Composer](https://getcomposer.org) before continuing.
-
-First, install the dependencies:
+You will need an install of [Composer](https://getcomposer.org) before continuing. Yii2 also unfortunately needs you to install `fxp/composer-asset-plugin`.
 
 ```bash
-composer install
+composer global require "fxp/composer-asset-plugin:^1.2.0"
 ```
+
+Install the dependencies:
+
+```bash
+composer install --prefer-source
+```
+**Note: please use the `prefer-source` flag cause some tests depend on Yii2's test cases which won't get installed without it.** 
 
 You need to also configure the `phpunit.xml` with your Algolia keys for running the integration tests:
 ```xml
