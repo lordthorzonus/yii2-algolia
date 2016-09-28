@@ -228,7 +228,7 @@ Contact::reindex();
  In background reindexing is done by chunking through all of the ActiveRecord models of the given class, 500 objects at time. 
  This means you can safely use reindexing even over really large datasets without consuming too much memory. Just mind your Algolia quota.
  
- ##### Reindexing By ActiveQuery
+#####Reindexing By ActiveQuery
  If you need to index a lot of related relationships to Algolia you can use the powerful `reindexByActiveQuery()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
  ```php
  $contactsQuery = Contact::find()->joinWith('company')->where('company_name' => 'Algolia']);
@@ -261,7 +261,7 @@ Contact::reindex();
  }
 ``` 
  
-  ##### Reindexing With a set of explicit SearchableModels
+#####Reindexing With a set of explicit SearchableModels
  It's also possible to explicitly define which objects should be reindexed. This can be done by using `reindexOnly()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
  ```php
  $contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
