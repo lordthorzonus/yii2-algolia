@@ -13,5 +13,5 @@ install:
   - travis_retry composer install --prefer-source --no-interaction --no-progress
 
 script:
-   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then phpunit --testsuite=unit; fi'
-   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpunit; fi'
+   - 'phpunit --testsuite=unit;'
+   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpunit --testsuite=integration; fi'
