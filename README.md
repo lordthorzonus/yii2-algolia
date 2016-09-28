@@ -228,6 +228,49 @@ Contact::reindex();
  In background reindexing is done by chunking through all of the ActiveRecord models of the given class, 500 objects at time. 
  This means you can safely use reindexing even over really large datasets without consuming too much memory. Just mind your Algolia quota.
  
+ ##### Reindexing By ActiveQuery
+ If you need to index a lot of related relationships to Algolia you can use the powerful `reindexByActiveQuery()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+ ```php
+ $contactsQuery = Contact::find()->joinWith('company')->where('company_name' => 'Algolia']);
+ $manager->reindexByActiveQuery($contactsQuery);
+ ```   
+ 
+ The `reindexByActiveQuery()` method also uses chunking in background, so it's safe to do query's over really big datasets. The indices to be reindexed will be resolved from the result of the queries models. 
+ 
+ To get the relations indexed into Algolia you of course need to also modify the `getAlgoliaRecord()` or the `fields()` method from the ActiveRecord model.
+ Yii provides a handy `isRelationPopulated()` method for customizing this:
+ 
+ ```php
+ class Contact extends ActiveRecord implements SearchableInterface
+ {
+    use Searchable;
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getAlgoliaRecord()
+    {
+        $record = $this->toArray();
+        
+        if($this->isRelationPopulated('company') {
+            $record['company'] = $this->company->toArray();
+        }
+        
+        return $record;
+    }
+ }
+``` 
+ 
+  ##### Reindexing With a set of explicit SearchableModels
+ It's also possible to explicitly define which objects should be reindexed. This can be done by using `reindexOnly()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
+ ```php
+ $contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
+ $manager->reindexOnly($contacts);
+ ```
+In the background the method figures out the indices of that need to be reindexed therefore the array must consist only models of a same class. Be wary of the memory consumption if you are fetching a lot of ActiveRecords this way.
+ 
+ 
+ 
 ####Clearing Indices
 To clear indices where the ActiveRecord is synced to, use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 
