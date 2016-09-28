@@ -179,7 +179,7 @@ class AlgoliaManager
     }
 
     /**
-     * Updates multiple models data in all indices.  The given searchable models must be of the same class.
+     * Updates multiple models data in all indices. The given searchable models must be of the same class.
      *
      * @param SearchableInterface[] $searchableModels
      *
@@ -216,6 +216,32 @@ class AlgoliaManager
         foreach ($indices as $index) {
             $objectID = $searchableModel->getObjectID();
             $response[$index->indexName] = $index->deleteObject($objectID);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Removes multiple models from all indices. The given searchable models must be of the same class.
+     *
+     * @param array $searchableModels
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function removeMultipleFromIndices(array $searchableModels)
+    {
+        $algoliaRecords = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
+        $indices = $this->initIndices($searchableModels[0]);
+        $objectIds = array_map(function ($algoliaRecord) {
+            return $algoliaRecord['objectID'];
+        }, $algoliaRecords);
+
+        $response = [];
+
+        foreach ($indices as $index) {
+            /* @var Index $index  */
+            $response[$index->indexName] = $index->deleteObjects($objectIds);
         }
 
         return $response;

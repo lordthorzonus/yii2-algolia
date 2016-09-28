@@ -181,6 +181,13 @@ $contact = Contact::findOne(['name' => 'test']);
 $manager->removeFromIndices($contact);
 ```
 
+It's also possible to delete multiple models of the same class in a batch with the service's `removeMultipleFromIndices()`
+
+```php
+$contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
+$manager->removeMultipleFromIndices($contacts);
+```
+
 ####Manual Updating
 Update is triggered using the `updateInIndices()` instance method.
 

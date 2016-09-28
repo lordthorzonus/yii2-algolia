@@ -13,7 +13,6 @@ use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 use Mockery as m;
 use yii\db\ActiveQuery;
-use yii\db\ActiveQueryInterface;
 
 class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -167,7 +166,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_can_remove_an_object_that_implements_searchable_interface_from_index()
+    public function it_can_remove_an_object_that_implements_searchable_interface_from_indices()
     {
         $dummyModel = m::mock(DummyActiveRecordModel::class);
         $dummyModel->shouldReceive('getObjectID')->andReturn(1);
@@ -182,6 +181,32 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient);
 
         $manager->removeFromIndices($dummyModel);
+    }
+
+    /** @test */
+    public function it_can_remove_multiple_objects_that_implement_searchable_interface_from_indices()
+    {
+        $testModel = m::mock(DummyActiveRecordModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel->shouldReceive('getObjectID')->andReturn(1);
+
+        $testModel2 = m::mock(DummyActiveRecordModel::class);
+        $testModel2->shouldNotReceive('getIndices');
+        $testModel2->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel2->shouldReceive('getObjectID')->andReturn(2);
+
+        $arrayOfTestModels = [$testModel, $testModel2];
+
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->shouldReceive('deleteObjects')->once()->with([1, 2]);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
+
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->removeMultipleFromIndices($arrayOfTestModels);
     }
 
     /** @test */
@@ -344,6 +369,30 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager = $this->getManager($mockAlgoliaClient);
         $manager->pushMultipleToIndices([$testModel, $testModel2]);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The given array should not contain multiple different classes
+     */
+    public function it_should_throw_an_exception_if_multiple_different_objects_are_used_for_deleting_in_batches()
+    {
+        $testModel = m::mock(DummyActiveRecordModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+        $testModel->shouldReceive('getAlgoliaRecord')->andReturn(['property1' => 'test']);
+        $testModel->shouldReceive('getObjectID')->andReturn(1);
+
+        // This model should throw an exception
+        $testModel2 = m::mock(DummyModel::class);
+
+        $mockIndex = m::mock(Index::class);
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->andReturn($mockIndex);
+
+        $manager = $this->getManager($mockAlgoliaClient);
+        $manager->removeMultipleFromIndices([$testModel, $testModel2]);
     }
 
     /**
