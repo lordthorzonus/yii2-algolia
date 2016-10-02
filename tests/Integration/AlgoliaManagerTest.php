@@ -41,8 +41,8 @@ class AlgoliaManagerTest extends TestCase
 
         Yii::$app->db->createCommand()->createTable('dummy_active_record_model', [
             'id' => Schema::TYPE_PK,
-            'test' => 'string',
-            'otherProperty' => 'string',
+            'test' => Schema::TYPE_STRING,
+            'otherProperty' => Schema::TYPE_STRING,
         ])->execute();
     }
 
@@ -206,6 +206,60 @@ class AlgoliaManagerTest extends TestCase
         $this->assertCount(1, $searchResult['DummyActiveRecordModel']['hits']);
         $this->assertEquals('test', $searchResult['DummyActiveRecordModel']['query']);
         $this->assertEquals(1, $searchResult['DummyActiveRecordModel']['hitsPerPage']);
+    }
+
+    /** @test */
+    public function it_can_reindex_the_given_active_record_class()
+    {
+        $activeRecord1 = new DummyActiveRecordModel();
+        $activeRecord1->test = 'test';
+        $activeRecord1->save();
+
+        $activeRecord2 = new DummyActiveRecordModel();
+        $activeRecord2->test = 'test';
+        $activeRecord2->save();
+
+        $indexName = $activeRecord1->getIndices()[0];
+        $index = $this->algoliaManager->initIndex($indexName);
+
+        $response = $this->algoliaManager->reindex(DummyActiveRecordModel::class);
+        $index->waitTask($response[$index->indexName]['taskID']);
+
+        $searchResult = $index->search('test');
+
+        $this->deleteIndex($index);
+        $this->assertCount(2, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_reindex_the_given_active_query()
+    {
+        $activeRecord1 = new DummyActiveRecordModel();
+        $activeRecord1->test = 'reindex';
+        $activeRecord1->otherProperty = 'indexable';
+        $activeRecord1->save();
+
+        $activeRecord2 = new DummyActiveRecordModel();
+        $activeRecord2->test = 'reindex';
+        $activeRecord2->otherProperty = 'notIndexable';
+        $activeRecord2->save();
+
+        $indexName = $activeRecord1->getIndices()[0];
+        $index = $this->algoliaManager->initIndex($indexName);
+
+        // Add dummy object to the index so it exists.
+        $response = $index->addObject(['dummy' => 'dummy'], 'dummy');
+        $index->waitTask($response['taskID']);
+
+        $activeQuery = DummyActiveRecordModel::find()->where(['otherProperty' => 'indexable']);
+
+        $response = $this->algoliaManager->reindexByActiveQuery($activeQuery);
+        $index->waitTask($response[$index->indexName]['taskID']);
+
+        $searchResult = $index->search('reindex');
+
+        $this->deleteIndex($index);
+        $this->assertCount(1, $searchResult['hits']);
     }
 
     /** @test */
