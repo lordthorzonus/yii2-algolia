@@ -495,5 +495,4 @@ class AlgoliaManager
 
         return $this->moveIndex($temporaryIndexName, $index->indexName);
     }
-
 }

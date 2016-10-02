@@ -137,7 +137,7 @@ class SearchableTest extends TestCase
             ->with(DummyActiveRecordModel::class)
             ->andReturn('response');
 
-        $response =  DummyActiveRecordModel::clearIndices();
+        $response = DummyActiveRecordModel::clearIndices();
         $this->assertEquals('response', $response);
     }
 

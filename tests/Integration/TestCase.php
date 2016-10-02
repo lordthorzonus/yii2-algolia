@@ -1,8 +1,6 @@
 <?php
 
-
 namespace leinonen\Yii2Algolia\Tests\Integration;
-
 
 use yii\db\Connection;
 
@@ -24,6 +22,4 @@ class TestCase extends \yiiunit\TestCase
 
         parent::setUp();
     }
-
-
 }

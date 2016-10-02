@@ -20,7 +20,6 @@ class AlgoliaManagerTest extends TestCase
 
     public function setUp()
     {
-
         parent::setUp();
 
         $this->mockWebApplication([
@@ -31,21 +30,20 @@ class AlgoliaManagerTest extends TestCase
                     'applicationId' => getenv('ALGOLIA_ID'),
                     'apiKey' => getenv('ALGOLIA_KEY'),
                 ],
-                'db' => $this->databaseConfig
+                'db' => $this->databaseConfig,
             ],
         ]);
         $this->algoliaManager = Yii::$container->get(AlgoliaManager::class);
 
-        if(Yii::$app->db->schema->getTableSchema('dummy_active_record_model') !== null) {
+        if (Yii::$app->db->schema->getTableSchema('dummy_active_record_model') !== null) {
             Yii::$app->db->createCommand()->dropTable('dummy_active_record_model')->execute();
         }
 
         Yii::$app->db->createCommand()->createTable('dummy_active_record_model', [
             'id' => Schema::TYPE_PK,
             'test' => 'string',
-            'otherProperty' => 'string'
+            'otherProperty' => 'string',
         ])->execute();
-
     }
 
     /** @test */
@@ -250,6 +248,7 @@ class AlgoliaManagerTest extends TestCase
     private function createDummyObjectToIndex($objectId = 1)
     {
         $searchableObject = $this->makeDummyModel($objectId);
+
         return $this->addSearchableObjectToIndex($searchableObject);
     }
 
