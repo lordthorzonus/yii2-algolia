@@ -653,7 +653,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient);
         $manager->removeMultipleFromIndices([$testModel]);
     }
-    
+
     /** @test */
     public function it_can_do_backend_searches_for_given_active_record_class()
     {
@@ -687,7 +687,7 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager->search(NotSearchableDummyModel::class, 'query string');
     }
-    
+
     /** @test */
     public function it_can_accept_also_additional_search_parameters_for_the_search_method()
     {
@@ -710,7 +710,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(['test' => 'response'], $response);
     }
-
 
     /**
      * Returns an new AlgoliaManager with mocked Factories.
