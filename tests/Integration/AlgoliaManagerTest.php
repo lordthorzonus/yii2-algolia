@@ -222,6 +222,10 @@ class AlgoliaManagerTest extends TestCase
         $indexName = $activeRecord1->getIndices()[0];
         $index = $this->algoliaManager->initIndex($indexName);
 
+        // Add dummy object to the index so it exists.
+        $response = $index->addObject(['dummy' => 'dummy'], 'dummy');
+        $index->waitTask($response['taskID']);
+
         $response = $this->algoliaManager->reindex(DummyActiveRecordModel::class);
         $index->waitTask($response[$index->indexName]['taskID']);
 
