@@ -370,7 +370,7 @@ class AlgoliaManager
     /**
      * @param string $className The name of the class which is to be searched.
      * @param string $query
-     * @param array $searchParameters Optional search parameters given as an associative array.
+     * @param null|array $searchParameters Optional search parameters given as an associative array.
      *
      * @link https://github.com/algolia/algoliasearch-client-php#search-parameters Allowed search parameters.
      *
