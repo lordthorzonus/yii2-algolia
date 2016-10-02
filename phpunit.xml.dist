@@ -8,6 +8,11 @@
     <php>
         <env name="ALGOLIA_ID" value="" />
         <env name="ALGOLIA_KEY" value="" />
+        <env name="DB_DRIVER" value="" />
+        <env name="DB_HOST" value="" />
+        <env name="DB_NAME" value="" />
+        <env name="DB_USERNAME" value="" />
+        <env name="DB_PASSWORD" value="" />
     </php>
     <testsuites>
         <testsuite name="unit">

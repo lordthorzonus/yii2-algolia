@@ -24,6 +24,7 @@ Table of contents
     * [Reindexing](#reindexing)
     * [Clearing Indices](#clearing-indices)
     * [Auto-indexing](#auto-indexing)
+* [Backend search](#backend-search)
 * [Using multiple environments](#using-multiple-environments) 
 * [Contributing](#contributing)
 
@@ -325,6 +326,29 @@ public function behaviors()
         ],
     ];
 }
+```
+
+### Backend Search
+Like [Algolia](https://github.com/algolia/algoliasearch-client-php#search-in-an-index---search) I would strongly recommend using Algolia's [JavaScript client](https://github.com/algolia/algoliasearch-client-js)
+for the best search experience. You can however use some helpers for doing search on php side:
+
+With the service: 
+
+```php
+$manager->search(Contact::class, 'John Doe');
+```
+
+The method also accepts [optional search parameters](https://github.com/algolia/algoliasearch-client-php#search-parameters):
+
+```php
+$manager->search(Contact::class, 'John Doe', ['hitsPerPage' => 2, 'attributesToRetrieve' => 'name,address']);
+```
+
+Searching is also available from a ActiveRecord class that uses the `leinonen\Yii2Algolia\ActiveRecord\Searchable` trait:
+
+```php
+Contact::search('John Doe');
+Contact::search('John Doe', ['hitsPerPage' => 2, 'attributesToRetrieve' => 'name,address']);
 ```
 
 ###Using multiple environments

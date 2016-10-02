@@ -22,11 +22,22 @@ composer install --prefer-source
 ```
 **Note: please use the `prefer-source` flag cause some tests depend on Yii2's test cases which won't get installed without it.** 
 
-You need to also configure the `phpunit.xml` with your Algolia keys for running the integration tests:
+Create a database for the integration tests: 
+
+```bash
+mysql -e 'CREATE SCHEMA algolia;' -uhomestead -psecret;
+```
+
+You need to also configure the `phpunit.xml` with your Algolia keys and database details for running the integration tests:
 ```xml
 <php>
     <env name="ALGOLIA_ID" value="id" />
     <env name="ALGOLIA_KEY" value="secret" />
+    <env name="DB_DRIVER" value="mysql" />
+    <env name="DB_HOST" value="localhost" />
+    <env name="DB_NAME" value="algolia" />
+    <env name="DB_USERNAME" value="homestead" />
+    <env name="DB_PASSWORD" value="secret" />
 </php>
 
 ```
