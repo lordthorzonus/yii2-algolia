@@ -229,7 +229,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [], null);
 
         $mockAlgoliaClient = m::mock(Client::class);
-
         $manager = $this->getManager($mockAlgoliaClient, null, $mockActiveQueryChunker);
 
         $manager->reindexByActiveQuery($mockActiveQuery);
@@ -248,7 +247,6 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $mockActiveQueryChunker = $this->mockActiveQueryChunkingForReindex($mockActiveQuery, [$testModel1], null);
 
         $mockAlgoliaClient = m::mock(Client::class);
-
         $manager = $this->getManager($mockAlgoliaClient, null, $mockActiveQueryChunker);
 
         $manager->reindexByActiveQuery($mockActiveQuery);
@@ -655,6 +653,64 @@ class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManager($mockAlgoliaClient);
         $manager->removeMultipleFromIndices([$testModel]);
     }
+    
+    /** @test */
+    public function it_can_do_backend_searches_for_given_active_record_class()
+    {
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'test';
+        $mockIndex->shouldReceive('search')->withArgs(['query string', null])->once()->andReturn('response');
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->once()->andReturn($mockIndex);
+
+        $testModel = m::mock(DummyModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+
+        $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
+        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyModel::class)->andReturn($testModel);
+
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
+        $response = $manager->search(DummyModel::class, 'query string');
+
+        $this->assertEquals(['test' => 'response'], $response);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The class: leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel doesn't implement leinonen\Yii2Algolia\SearchableInterface
+     */
+    public function it_should_throw_an_exception_if_the_given_class_for_the_search_doesnt_implement_searchable_interface()
+    {
+        $mockAlgoliaClient = m::mock(Client::class);
+        $manager = $this->getManager($mockAlgoliaClient);
+
+        $manager->search(NotSearchableDummyModel::class, 'query string');
+    }
+    
+    /** @test */
+    public function it_can_accept_also_additional_search_parameters_for_the_search_method()
+    {
+        $searchParameters = ['attributesToRetrieve' => 'firstname,lastname', 'hitsPerPage' => 50];
+
+        $mockAlgoliaClient = m::mock(Client::class);
+        $mockIndex = m::mock(Index::class);
+        $mockIndex->indexName = 'test';
+        $mockIndex->shouldReceive('search')->withArgs(['query string', $searchParameters])->once()->andReturn('response');
+        $mockAlgoliaClient->shouldReceive('initIndex')->with('test')->once()->andReturn($mockIndex);
+
+        $testModel = m::mock(DummyModel::class);
+        $testModel->shouldReceive('getIndices')->andReturn(['test']);
+
+        $mockActiveRecordFactory = m::mock(ActiveRecordFactory::class);
+        $mockActiveRecordFactory->shouldReceive('make')->once()->with(DummyModel::class)->andReturn($testModel);
+
+        $manager = $this->getManager($mockAlgoliaClient, $mockActiveRecordFactory);
+        $response = $manager->search(DummyModel::class, 'query string', $searchParameters);
+
+        $this->assertEquals(['test' => 'response'], $response);
+    }
+
 
     /**
      * Returns an new AlgoliaManager with mocked Factories.

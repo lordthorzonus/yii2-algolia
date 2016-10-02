@@ -78,7 +78,9 @@ trait Searchable
     }
 
     /**
-     * Indexes the model to Algolia.
+     * @see AlgoliaManager::pushToIndices()
+     *
+     * @return array
      */
     public function index()
     {
@@ -88,45 +90,66 @@ trait Searchable
     }
 
     /**
-     * Removes the model from Algolia.
+     * @see AlgoliaManager::removeFromIndices()
      *
-     * @throws \Exception
+     * @return array
      */
     public function removeFromIndices()
     {
         $manager = $this->getAlgoliaManager();
 
-        $manager->removeFromIndices($this);
+        return $manager->removeFromIndices($this);
     }
 
     /**
-     * Updates the model in Algolia.
+     * @see AlgoliaManager::updateInIndices()
+     *
+     * @return array
      */
     public function updateInIndices()
     {
         $manager = $this->getAlgoliaManager();
 
-        $manager->updateInIndices($this);
+        return $manager->updateInIndices($this);
     }
 
     /**
-     * Re-indexes the indices safely for this ActiveRecord class.
+     * @see AlgoliaManager::reindex()
+     *
+     * @return array
      */
     public static function reindex()
     {
         $manager = static::getAlgoliaManager();
 
-        $manager->reindex(__CLASS__);
+        return $manager->reindex(__CLASS__);
     }
 
     /**
-     * Clears the indices for this ActiveRecord class.
+     * @see AlgoliaManager::clearIndices()
+     *
+     * @return array
      */
     public static function clearIndices()
     {
         $manager = static::getAlgoliaManager();
 
-        $manager->clearIndices(__CLASS__);
+        return $manager->clearIndices(__CLASS__);
+    }
+
+    /**
+     * @see AlgoliaManager::search()
+     *
+     * @param string $query
+     * @param null|array $searchParameters
+     *
+     * @return array
+     */
+    public static function search($query, array $searchParameters = null)
+    {
+        $manager = static::getAlgoliaManager();
+
+        return $manager->search(__CLASS__, $query, $searchParameters);
     }
 
     /**

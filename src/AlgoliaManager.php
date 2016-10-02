@@ -368,6 +368,31 @@ class AlgoliaManager
     }
 
     /**
+     * @param string $className The name of the class which is to be searched.
+     * @param string $query
+     * @param array $searchParameters Optional search parameters given as an associative array.
+     *
+     * @link https://github.com/algolia/algoliasearch-client-php#search-parameters Allowed search parameters.
+     *
+     * @return array
+     */
+    public function search($className, $query, array $searchParameters = null)
+    {
+        $this->checkImplementsSearchableInterface($className);
+        $activeRecord = $this->activeRecordFactory->make($className);
+        $response = [];
+
+        /* @var SearchableInterface $activeRecord */
+        $indices = $indices = $this->initIndices($activeRecord);
+
+        foreach ($indices as $index) {
+            $response[$index->indexName] = $index->search($query, $searchParameters);
+        }
+
+        return $response;
+    }
+
+    /**
      * Dynamically pass methods to the Algolia Client.
      *
      * @param string $method
@@ -470,4 +495,5 @@ class AlgoliaManager
 
         return $this->moveIndex($temporaryIndexName, $index->indexName);
     }
+
 }

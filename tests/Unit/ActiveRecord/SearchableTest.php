@@ -73,27 +73,39 @@ class SearchableTest extends TestCase
     public function it_can_be_pushed_to_indices()
     {
         $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
-        $this->dummyAlgoliaManager->shouldReceive('pushToIndices')->with($testModel);
+        $this->dummyAlgoliaManager->shouldReceive('pushToIndices')
+            ->once()
+            ->with($testModel)
+            ->andReturn('response');
 
-        $testModel->index();
+        $response = $testModel->index();
+        $this->assertEquals('response', $response);
     }
 
     /** @test */
     public function it_can_be_removed_from_indices()
     {
         $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
-        $this->dummyAlgoliaManager->shouldReceive('removeFromIndices')->with($testModel);
+        $this->dummyAlgoliaManager->shouldReceive('removeFromIndices')
+            ->once()
+            ->with($testModel)
+            ->andReturn('response');
 
-        $testModel->removeFromIndices();
+        $response = $testModel->removeFromIndices();
+        $this->assertEquals('response', $response);
     }
 
     /** @test */
     public function it_can_be_updated_in_indices()
     {
         $testModel = m::mock(DummyActiveRecordModel::class)->makePartial();
-        $this->dummyAlgoliaManager->shouldReceive('updateInIndices')->with($testModel);
+        $this->dummyAlgoliaManager->shouldReceive('updateInIndices')
+            ->once()
+            ->with($testModel)
+            ->andReturn('response');
 
-        $testModel->updateInIndices();
+        $response = $testModel->updateInIndices();
+        $this->assertEquals('response', $response);
     }
 
     /** @test */
@@ -108,16 +120,49 @@ class SearchableTest extends TestCase
     /** @test */
     public function it_can_be_re_indexed()
     {
-        $this->dummyAlgoliaManager->shouldReceive('reindex')->with(DummyActiveRecordModel::class);
+        $this->dummyAlgoliaManager->shouldReceive('reindex')
+            ->once()
+            ->with(DummyActiveRecordModel::class)
+            ->andReturn('response');
 
-        DummyActiveRecordModel::reindex();
+        $response = DummyActiveRecordModel::reindex();
+        $this->assertEquals('response', $response);
     }
 
     /** @test */
     public function it_can_be_cleared_from_indices()
     {
-        $this->dummyAlgoliaManager->shouldReceive('clearIndices')->with(DummyActiveRecordModel::class);
+        $this->dummyAlgoliaManager->shouldReceive('clearIndices')
+            ->once()
+            ->with(DummyActiveRecordModel::class)
+            ->andReturn('response');
 
-        DummyActiveRecordModel::clearIndices();
+        $response =  DummyActiveRecordModel::clearIndices();
+        $this->assertEquals('response', $response);
+    }
+
+    /** @test */
+    public function it_can_be_searched()
+    {
+        $this->dummyAlgoliaManager->shouldReceive('search')
+            ->once()
+            ->with(DummyActiveRecordModel::class, 'query string', null)
+            ->andReturn('response');
+
+        $response = DummyActiveRecordModel::search('query string');
+        $this->assertEquals('response', $response);
+    }
+
+    /** @test */
+    public function it_can_be_searched_with_addittional_search_parameters()
+    {
+        $searchParameters = ['attributesToRetrieve' => 'firstname,lastname', 'hitsPerPage' => 50];
+        $this->dummyAlgoliaManager->shouldReceive('search')
+            ->once()
+            ->with(DummyActiveRecordModel::class, 'query string', $searchParameters)
+            ->andReturn('response');
+
+        $response = DummyActiveRecordModel::search('query string', $searchParameters);
+        $this->assertEquals('response', $response);
     }
 }
