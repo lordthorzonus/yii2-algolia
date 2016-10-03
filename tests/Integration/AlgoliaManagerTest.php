@@ -9,7 +9,6 @@ use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use Yii;
 use Mockery as m;
-use yii\db\Schema;
 
 class AlgoliaManagerTest extends TestCase
 {
@@ -247,7 +246,8 @@ class AlgoliaManagerTest extends TestCase
 
     /** @test */
     public function it_can_reindex_explicitly_given_searchable_objects()
-    { $activeRecord1 = new DummyActiveRecordModel();
+    {
+        $activeRecord1 = new DummyActiveRecordModel();
         $activeRecord1->test = 'test';
         $activeRecord1->save();
 
