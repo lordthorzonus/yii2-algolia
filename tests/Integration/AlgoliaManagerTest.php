@@ -22,28 +22,7 @@ class AlgoliaManagerTest extends TestCase
     {
         parent::setUp();
 
-        $this->mockWebApplication([
-            'bootstrap' => ['algolia'],
-            'components' => [
-                'algolia' => [
-                    'class' => AlgoliaComponent::class,
-                    'applicationId' => getenv('ALGOLIA_ID'),
-                    'apiKey' => getenv('ALGOLIA_KEY'),
-                ],
-                'db' => $this->databaseConfig,
-            ],
-        ]);
         $this->algoliaManager = Yii::$container->get(AlgoliaManager::class);
-
-        if (Yii::$app->db->schema->getTableSchema('dummy_active_record_model') !== null) {
-            Yii::$app->db->createCommand()->dropTable('dummy_active_record_model')->execute();
-        }
-
-        Yii::$app->db->createCommand()->createTable('dummy_active_record_model', [
-            'id' => Schema::TYPE_PK,
-            'test' => Schema::TYPE_STRING,
-            'otherProperty' => Schema::TYPE_STRING,
-        ])->execute();
     }
 
     /** @test */
@@ -222,7 +201,7 @@ class AlgoliaManagerTest extends TestCase
         $indexName = $activeRecord1->getIndices()[0];
         $index = $this->algoliaManager->initIndex($indexName);
 
-        // Add dummy object to the index so it exists.
+        // Add dummy object to the index so it exists for the reindex operation.
         $response = $index->addObject(['dummy' => 'dummy'], 'dummy');
         $index->waitTask($response['taskID']);
 
@@ -251,7 +230,7 @@ class AlgoliaManagerTest extends TestCase
         $indexName = $activeRecord1->getIndices()[0];
         $index = $this->algoliaManager->initIndex($indexName);
 
-        // Add dummy object to the index so it exists.
+        // Add dummy object to the index so it exists for the reindex operation.
         $response = $index->addObject(['dummy' => 'dummy'], 'dummy');
         $index->waitTask($response['taskID']);
 
@@ -264,6 +243,55 @@ class AlgoliaManagerTest extends TestCase
 
         $this->deleteIndex($index);
         $this->assertCount(1, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_reindex_explicitly_given_searchable_objects()
+    { $activeRecord1 = new DummyActiveRecordModel();
+        $activeRecord1->test = 'test';
+        $activeRecord1->save();
+
+        $activeRecord2 = new DummyActiveRecordModel();
+        $activeRecord2->test = 'test';
+        $activeRecord2->save();
+
+        $indexName = $activeRecord1->getIndices()[0];
+        $index = $this->algoliaManager->initIndex($indexName);
+
+        // Add dummy object to the index so it exists for the reindex operation.
+        $response = $index->addObject(['dummy' => 'dummy'], 'dummy');
+        $index->waitTask($response['taskID']);
+
+        $response = $this->algoliaManager->reindexOnly([$activeRecord1, $activeRecord2]);
+        $index->waitTask($response[$index->indexName]['taskID']);
+
+        $searchResult = $index->search('test');
+
+        $this->deleteIndex($index);
+        $this->assertCount(2, $searchResult['hits']);
+    }
+
+    /** @test */
+    public function it_can_clear_indices_for_given_active_record_class()
+    {
+        $activeRecord1 = new DummyActiveRecordModel();
+        $activeRecord1->test = 'test';
+        $activeRecord1->save();
+
+        $activeRecord2 = new DummyActiveRecordModel();
+        $activeRecord2->test = 'test';
+        $activeRecord2->save();
+
+        $index = $this->addSearchableObjectToIndex($activeRecord1);
+        $this->addSearchableObjectToIndex($activeRecord2);
+
+        $response = $this->algoliaManager->clearIndices(DummyActiveRecordModel::class);
+        $index->waitTask($response[$index->indexName]['taskID']);
+
+        $searchResult = $index->search('test');
+
+        $this->deleteIndex($index);
+        $this->assertCount(0, $searchResult['hits']);
     }
 
     /** @test */
