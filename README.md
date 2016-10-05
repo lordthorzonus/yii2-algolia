@@ -52,7 +52,9 @@ use leinonen\Yii2Algolia\AlgoliaComponent;
 ```
 
 ## Usage
-The preferred way of using the package is through dependency injection. Just inject the `leinonen\Yii2Algolia\AlgoliaManager`. It has all the same methods available as the official Algolia Client (`AlgoliaSearch\Client`). The documentation can be found [here](https://github.com/algolia/algoliasearch-client-php).
+The preferred way of using the package is through dependency injection. Just inject the `leinonen\Yii2Algolia\AlgoliaManager`. 
+
+It has all the same methods available as the official Algolia Client (`AlgoliaSearch\Client`). The documentation can be found [here](https://github.com/algolia/algoliasearch-client-php). The manager class delegates all the methods to the original Client and provides some addittional helpers on top.
 
 ```php
 
