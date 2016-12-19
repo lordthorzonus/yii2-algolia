@@ -2,11 +2,11 @@
 
 namespace leinonen\Yii2Algolia;
 
-use AlgoliaSearch\Client;
 use AlgoliaSearch\Index;
+use AlgoliaSearch\Client;
+use yii\db\ActiveQueryInterface;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
-use yii\db\ActiveQueryInterface;
 
 /**
  * @method setConnectTimeout(int $connectTimeout, int $timeout = 30, int $searchTimeout = 5)

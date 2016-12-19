@@ -2,8 +2,8 @@
 
 namespace leinonen\Yii2Algolia\ActiveRecord;
 
-use leinonen\Yii2Algolia\AlgoliaManager;
 use Yii;
+use leinonen\Yii2Algolia\AlgoliaManager;
 
 /**
  * Simple trait that implements methods needed for the SearchableInterface + couple helpers for dealing with ActiveRecords.

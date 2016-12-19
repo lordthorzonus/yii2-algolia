@@ -2,13 +2,13 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit;
 
+use Yii;
+use Mockery as m;
+use yiiunit\TestCase;
 use AlgoliaSearch\Client;
-use leinonen\Yii2Algolia\AlgoliaComponent;
 use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
-use Yii;
-use yiiunit\TestCase;
-use Mockery as m;
+use leinonen\Yii2Algolia\AlgoliaComponent;
 
 class AlgoliaComponentTest extends TestCase
 {

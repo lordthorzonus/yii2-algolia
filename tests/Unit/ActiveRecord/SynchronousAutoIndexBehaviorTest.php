@@ -2,15 +2,15 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit\ActiveRecord;
 
-use leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior;
-use leinonen\Yii2Algolia\AlgoliaComponent;
-use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
-use leinonen\Yii2Algolia\Tests\Helpers\SynchronousAutoIndexedDummyModel;
-use Mockery as m;
 use Yii;
-use yii\db\ActiveRecord;
+use Mockery as m;
 use yiiunit\TestCase;
+use yii\db\ActiveRecord;
+use leinonen\Yii2Algolia\AlgoliaManager;
+use leinonen\Yii2Algolia\AlgoliaComponent;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior;
+use leinonen\Yii2Algolia\Tests\Helpers\SynchronousAutoIndexedDummyModel;
 
 class SynchronousAutoIndexBehaviorTest extends TestCase
 {

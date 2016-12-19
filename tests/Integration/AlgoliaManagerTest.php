@@ -2,13 +2,13 @@
 
 namespace leinonen\Yii2Algolia\Tests\Integration;
 
-use leinonen\Yii2Algolia\AlgoliaComponent;
-use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\SearchableInterface;
-use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
-use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use Yii;
 use Mockery as m;
+use leinonen\Yii2Algolia\AlgoliaManager;
+use leinonen\Yii2Algolia\AlgoliaComponent;
+use leinonen\Yii2Algolia\SearchableInterface;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 
 class AlgoliaManagerTest extends TestCase
 {
@@ -317,7 +317,6 @@ class AlgoliaManagerTest extends TestCase
         $searchableObject->shouldReceive('getIndices')->andReturn(['index']);
 
         $pushResponse = $algoliaManager->pushToIndices($searchableObject);
-
 
         $this->assertArrayHasKey('test_index', $pushResponse);
         $this->assertEquals('test', $algoliaManager->getEnv());

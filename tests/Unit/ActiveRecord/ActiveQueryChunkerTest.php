@@ -2,10 +2,10 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit\ActiveRecord;
 
-use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
-use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
 use Mockery as m;
 use yii\db\ActiveQueryInterface;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 
 class ActiveQueryChunkerTest extends \PHPUnit_Framework_TestCase
 {

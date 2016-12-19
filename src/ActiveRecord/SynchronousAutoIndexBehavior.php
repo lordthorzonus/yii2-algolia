@@ -2,11 +2,11 @@
 
 namespace leinonen\Yii2Algolia\ActiveRecord;
 
-use leinonen\Yii2Algolia\AlgoliaManager;
 use Yii;
-use yii\base\Behavior;
 use yii\base\Event;
+use yii\base\Behavior;
 use yii\db\ActiveRecord;
+use leinonen\Yii2Algolia\AlgoliaManager;
 
 class SynchronousAutoIndexBehavior extends Behavior
 {

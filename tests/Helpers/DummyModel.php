@@ -2,8 +2,8 @@
 
 namespace leinonen\Yii2Algolia\Tests\Helpers;
 
-use leinonen\Yii2Algolia\SearchableInterface;
 use yii\base\Model;
+use leinonen\Yii2Algolia\SearchableInterface;
 
 class DummyModel extends Model implements SearchableInterface
 {

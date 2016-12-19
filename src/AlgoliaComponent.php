@@ -2,13 +2,13 @@
 
 namespace leinonen\Yii2Algolia;
 
-use AlgoliaSearch\Client;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
+use yii\base\Component;
+use AlgoliaSearch\Client;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
-use yii\base\Component;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
 /**
  * @method Client getClient()
