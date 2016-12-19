@@ -2,10 +2,10 @@
 
 namespace leinonen\Yii2Algolia\Tests\Integration;
 
-use leinonen\Yii2Algolia\AlgoliaComponent;
 use Yii;
-use yii\db\Connection;
 use yii\db\Schema;
+use yii\db\Connection;
+use leinonen\Yii2Algolia\AlgoliaComponent;
 
 class TestCase extends \yiiunit\TestCase
 {

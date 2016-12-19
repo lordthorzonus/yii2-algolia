@@ -2,17 +2,17 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit;
 
-use AlgoliaSearch\Client;
-use AlgoliaSearch\Index;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
-use leinonen\Yii2Algolia\AlgoliaManager;
-use leinonen\Yii2Algolia\SearchableInterface;
-use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
-use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
-use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 use Mockery as m;
 use yii\db\ActiveQuery;
+use AlgoliaSearch\Index;
+use AlgoliaSearch\Client;
+use leinonen\Yii2Algolia\AlgoliaManager;
+use leinonen\Yii2Algolia\SearchableInterface;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyModel;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
+use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
+use leinonen\Yii2Algolia\Tests\Helpers\NotSearchableDummyModel;
 
 class AlgoliaManagerTest extends \PHPUnit_Framework_TestCase
 {
