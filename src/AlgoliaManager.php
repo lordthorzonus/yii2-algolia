@@ -238,7 +238,7 @@ class AlgoliaManager
     {
         $algoliaRecords = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
         $indices = $this->initIndices($searchableModels[0]);
-        $objectIds = array_map(function ($algoliaRecord) {
+        $objectIds = \array_map(function ($algoliaRecord) {
             return $algoliaRecord['objectID'];
         }, $algoliaRecords);
 
@@ -402,7 +402,7 @@ class AlgoliaManager
      */
     public function __call($method, $parameters)
     {
-        return call_user_func_array([$this->getClient(), $method], $parameters);
+        return \call_user_func_array([$this->getClient(), $method], $parameters);
     }
 
     /**
@@ -430,7 +430,7 @@ class AlgoliaManager
     {
         $indexNames = $searchableModel->getIndices();
 
-        $indices = array_map(function ($indexName) {
+        $indices = \array_map(function ($indexName) {
             if ($this->env !== null) {
                 $indexName = $this->env . '_' . $indexName;
             }
@@ -455,7 +455,7 @@ class AlgoliaManager
         }
 
         // Use the first element of the array to define what kind of models we are indexing.
-        $arrayType = get_class($searchableModels[0]);
+        $arrayType = \get_class($searchableModels[0]);
         $this->checkImplementsSearchableInterface($arrayType);
 
         $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {

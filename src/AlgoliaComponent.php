@@ -160,7 +160,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      */
     public function __call($method, $parameters)
     {
-        return call_user_func_array([$this->manager, $method], $parameters);
+        return \call_user_func_array([$this->manager, $method], $parameters);
     }
 
     /**

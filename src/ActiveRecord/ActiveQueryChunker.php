@@ -25,7 +25,7 @@ class ActiveQueryChunker
             // On each chunk, pass the records to the callback and then let the
             // developer take care of everything within the callback. This allows to
             // keep the memory low when looping through large result sets.
-            $callableResults = call_user_func($callback, $records);
+            $callableResults = \call_user_func($callback, $records);
 
             if ($callableResults === false) {
                 break;
@@ -33,8 +33,8 @@ class ActiveQueryChunker
 
             // If the results of the given callable function were an array
             // merge them into the result array which is returned at the end of the chunking.
-            if (is_array($callableResults)) {
-                $results = array_merge($results, $callableResults);
+            if (\is_array($callableResults)) {
+                $results = \array_merge($results, $callableResults);
             }
 
             $pageNumber++;
