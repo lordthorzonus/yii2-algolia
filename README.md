@@ -109,7 +109,7 @@ By default the helpers will use the class name as the name of the index. You can
 class Contact extends ActiveRecord implements SearchableInterface
 {
     use Searchable;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -136,6 +136,22 @@ class Contact extends ActiveRecord implements SearchableInterface
 }
 ```
 
+For providing the Algolia's ObjectID the package uses `getObjectID()` method from the Searchable model. The helper trait will use ActiveRecord's `getPrimaryKey()` method by default. If you want to use some other key just override the method (or implement in your own if you aren't using the trait):
+
+```php
+class Contact extends ActiveRecord implements SearchableInterface
+{
+    use Searchable;
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectID()
+    {
+        return $this->getUuid();
+    }
+}
+```
 
 You can also also implement the `leinonen\Yii2Algolia\SearchableInterface` for plain old PHP objects and then use the `leinonen\Yii2Algolia\AlgoliaManager` to control them. Note that all helpers are not available for use other than with ActiveRecord classes.
 
