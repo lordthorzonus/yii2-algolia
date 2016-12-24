@@ -136,7 +136,7 @@ class Contact extends ActiveRecord implements SearchableInterface
 }
 ```
 
-For providing the Algolia's ObjectID the package uses `getObjectID()` method from the Searchable model. The helper trait will use ActiveRecord's `getPrimaryKey()` method by default. If you want to use some other key just override the method (or implement in your own if you aren't using the trait):
+For providing the Algolia's ObjectID the package uses `getObjectID()` method from the Searchable model. The helper trait will use ActiveRecord's `getPrimaryKey()` method by default. If you want to use some other key just override the method (or implement your own if you aren't using the trait):
 
 ```php
 class Contact extends ActiveRecord implements SearchableInterface
