@@ -34,6 +34,7 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
  * @method mixed request(\AlgoliaSearch\ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
  * @method mixed doRequest(\AlgoliaSearch\ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
  * @method \AlgoliaSearch\PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
+ * @method getContext()
  * @see Client
  */
 class AlgoliaManager
