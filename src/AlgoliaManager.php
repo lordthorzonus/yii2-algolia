@@ -459,7 +459,7 @@ class AlgoliaManager
         $arrayType = \get_class($searchableModels[0]);
         $this->checkImplementsSearchableInterface($arrayType);
 
-        $algoliaRecords = array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
+        $algoliaRecords = \array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
             if (! $searchableModel instanceof $arrayType) {
                 throw new \InvalidArgumentException('The given array should not contain multiple different classes');
             }
