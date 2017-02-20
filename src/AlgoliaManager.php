@@ -131,14 +131,11 @@ class AlgoliaManager
     public function pushToIndices(SearchableInterface $searchableModel)
     {
         $indices = $this->initIndices($searchableModel);
-        $response = [];
+        $record = $searchableModel->getAlgoliaRecord();
 
-        foreach ($indices as $index) {
-            $record = $searchableModel->getAlgoliaRecord();
-            $response[$index->indexName] = $index->addObject($record, $searchableModel->getObjectID());
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($record, $searchableModel) {
+            return $index->addObject($record, $searchableModel->getObjectID());
+        });
     }
 
     /**
@@ -153,14 +150,9 @@ class AlgoliaManager
         $algoliaRecords = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
         $indices = $this->initIndices($searchableModels[0]);
 
-        $response = [];
-
-        foreach ($indices as $index) {
-            /* @var Index $index  */
-            $response[$index->indexName] = $index->addObjects($algoliaRecords);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($algoliaRecords) {
+            return $index->addObjects($algoliaRecords);
+        });
     }
 
     /**
@@ -173,15 +165,12 @@ class AlgoliaManager
     public function updateInIndices(SearchableInterface $searchableModel)
     {
         $indices = $this->initIndices($searchableModel);
-        $response = [];
+        $record = $searchableModel->getAlgoliaRecord();
+        $record['objectID'] = $searchableModel->getObjectID();
 
-        foreach ($indices as $index) {
-            $record = $searchableModel->getAlgoliaRecord();
-            $record['objectID'] = $searchableModel->getObjectID();
-            $response[$index->indexName] = $index->saveObject($record);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($record) {
+            return $index->saveObject($record);
+        });
     }
 
     /**
@@ -196,14 +185,9 @@ class AlgoliaManager
         $algoliaRecords = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
         $indices = $this->initIndices($searchableModels[0]);
 
-        $response = [];
-
-        foreach ($indices as $index) {
-            /* @var Index $index  */
-            $response[$index->indexName] = $index->saveObjects($algoliaRecords);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($algoliaRecords) {
+            return $index->saveObjects($algoliaRecords);
+        });
     }
 
     /**
@@ -217,14 +201,11 @@ class AlgoliaManager
     public function removeFromIndices(SearchableInterface $searchableModel)
     {
         $indices = $indices = $this->initIndices($searchableModel);
-        $response = [];
+        $objectID = $searchableModel->getObjectID();
 
-        foreach ($indices as $index) {
-            $objectID = $searchableModel->getObjectID();
-            $response[$index->indexName] = $index->deleteObject($objectID);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($objectID) {
+            return $index->deleteObject($objectID);
+        });
     }
 
     /**
@@ -243,14 +224,9 @@ class AlgoliaManager
             return $algoliaRecord['objectID'];
         }, $algoliaRecords);
 
-        $response = [];
-
-        foreach ($indices as $index) {
-            /* @var Index $index  */
-            $response[$index->indexName] = $index->deleteObjects($objectIds);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($objectIds) {
+            return $index->deleteObjects($objectIds);
+        });
     }
 
     /**
@@ -275,13 +251,10 @@ class AlgoliaManager
 
         /* @var SearchableInterface $activeRecord */
         $indices = $this->initIndices($activeRecord);
-        $response = [];
 
-        foreach ($indices as $index) {
-            $response[$index->indexName] = $this->reindexAtomically($index, $records);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($records) {
+            return $this->reindexAtomically($index, $records);
+        });
     }
 
     /**
@@ -298,13 +271,9 @@ class AlgoliaManager
         $records = $this->getAlgoliaRecordsFromSearchableModelArray($searchableModels);
         $indices = $this->initIndices($searchableModels[0]);
 
-        $response = [];
-
-        foreach ($indices as $index) {
-            $response[$index->indexName] = $this->reindexAtomically($index, $records);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($records) {
+            return $this->reindexAtomically($index, $records);
+        });
     }
 
     /**
@@ -318,7 +287,6 @@ class AlgoliaManager
     public function reindexByActiveQuery(ActiveQueryInterface $activeQuery)
     {
         $indices = null;
-
         $records = $this->activeQueryChunker->chunk(
             $activeQuery,
             self::CHUNK_SIZE,
@@ -335,13 +303,9 @@ class AlgoliaManager
             }
         );
 
-        $response = [];
-
-        foreach ($indices as $index) {
-            $response[$index->indexName] = $this->reindexAtomically($index, $records);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($records) {
+            return $this->reindexAtomically($index, $records);
+        });
     }
 
     /**
@@ -355,17 +319,13 @@ class AlgoliaManager
     public function clearIndices($className)
     {
         $this->checkImplementsSearchableInterface($className);
+        /** @var SearchableInterface $activeRecord */
         $activeRecord = $this->activeRecordFactory->make($className);
-        $response = [];
-
-        /* @var SearchableInterface $activeRecord */
         $indices = $indices = $this->initIndices($activeRecord);
 
-        foreach ($indices as $index) {
-            $response[$index->indexName] = $index->clearIndex();
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) {
+            return $index->clearIndex();
+        });
     }
 
     /**
@@ -380,17 +340,13 @@ class AlgoliaManager
     public function search($className, $query, array $searchParameters = null)
     {
         $this->checkImplementsSearchableInterface($className);
-        $activeRecord = $this->activeRecordFactory->make($className);
-        $response = [];
-
         /* @var SearchableInterface $activeRecord */
+        $activeRecord = $this->activeRecordFactory->make($className);
         $indices = $indices = $this->initIndices($activeRecord);
 
-        foreach ($indices as $index) {
-            $response[$index->indexName] = $index->search($query, $searchParameters);
-        }
-
-        return $response;
+        return $this->processIndices($indices, function (Index $index) use ($query, $searchParameters) {
+            return $index->search($query, $searchParameters);
+        });
     }
 
     /**
@@ -495,5 +451,24 @@ class AlgoliaManager
         $temporaryIndex->setSettings($settings);
 
         return $this->moveIndex($temporaryIndexName, $index->indexName);
+    }
+
+    /**
+     * Performs actions for given indices returning an array of responses from those actions.
+     *
+     * @param Index[] $indices
+     * @param callable $callback
+     *
+     * @return array The response as an array in format of ['indexName' => $responseFromAlgoliaClient]
+     */
+    private function processIndices($indices, callable $callback)
+    {
+        $response = [];
+
+        foreach ($indices as $index) {
+            $response[$index->indexName] = \call_user_func($callback, $index);
+        }
+
+        return $response;
     }
 }
