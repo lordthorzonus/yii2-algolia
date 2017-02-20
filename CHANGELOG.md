@@ -1,5 +1,9 @@
 #Changelog
 
+## 1.2.0
+* Small documentation changes
+* Minor refactorings to make the code prettier 
+
 ## 1.1.1
 * Added FQN to all global functions for micro-optimization. See: https://github.com/Roave/FunctionFQNReplacer for more info.
 * Documentation about `getObjectID()`
