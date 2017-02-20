@@ -13,6 +13,9 @@ build:
 filter:
     excluded_paths:
         - 'tests/*'
+tests:
+    override:
+        - phpunit --testsuite=unit
 before_commands:
     - sudo composer global require "fxp/composer-asset-plugin:^1.1" --no-interaction
     - composer install --dev --prefer-source --no-interaction
