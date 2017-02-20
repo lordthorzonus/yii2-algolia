@@ -18,7 +18,6 @@ before_commands:
     - composer install --dev --prefer-source --no-interaction
 tools:
     external_code_coverage: true
-        timeout: 1440
 checks:
     php:
         code_rating: true
