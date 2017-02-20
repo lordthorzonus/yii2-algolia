@@ -10,20 +10,15 @@ build:
     project_setup:
         before:
             - mysql -e "CREATE DATABASE algolia"
-    tests:
-        override:
-            -
-                command: 'phpunit --coverage-clover=coverage.clover'
-                coverage:
-                    file: 'coverage.clover'
-                    format: 'php-clover'
 filter:
     excluded_paths:
         - 'tests/*'
 before_commands:
     - sudo composer global require "fxp/composer-asset-plugin:^1.1" --no-interaction
     - composer install --dev --prefer-source --no-interaction
-
+tools:
+    external_code_coverage: true
+        timeout: 1440    # Timeout in seconds.
 checks:
     php:
         code_rating: true
