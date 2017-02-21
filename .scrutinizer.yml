@@ -4,8 +4,10 @@ build:
             version: 7.0
     dependencies:
         before:
-            - sudo composer self-update
-            - sudo composer global require "fxp/composer-asset-plugin:^1.1" --no-interaction
+            - composer self-update
+            - composer global require "fxp/composer-asset-plugin:^1.2.0" --no-interaction
+        override:
+            - composer install --prefer-source
     tests:
         override:
             - phpunit --testsuite=unit
