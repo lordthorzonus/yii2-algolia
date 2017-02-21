@@ -14,9 +14,6 @@ build:
 filter:
     excluded_paths:
         - 'tests/*'
-tools:
-    external_code_coverage:
-        timeout: 1800
 checks:
     php:
         code_rating: true
