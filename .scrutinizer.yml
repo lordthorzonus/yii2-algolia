@@ -1,26 +1,20 @@
 build:
     environment:
         php:
-            version: 5.6
+            version: 7.0
     dependencies:
         before:
+            - sudo composer self-update
             - sudo composer global require "fxp/composer-asset-plugin:^1.1" --no-interaction
-            - composer install --dev --prefer-source --no-interaction
-            - composer -v update
-    project_setup:
-        before:
-            - mysql -e "CREATE DATABASE algolia"
     tests:
         override:
             - phpunit --testsuite=unit
 filter:
     excluded_paths:
         - 'tests/*'
-before_commands:
-    - sudo composer global require "fxp/composer-asset-plugin:^1.1" --no-interaction
-    - composer install --dev --prefer-source --no-interaction
 tools:
-    external_code_coverage: true
+    external_code_coverage:
+        timeout: 1800
 checks:
     php:
         code_rating: true
