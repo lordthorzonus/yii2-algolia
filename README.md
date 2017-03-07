@@ -347,7 +347,7 @@ public function behaviors()
 ```
 
 ### Backend Search
-Like [Algolia](https://github.com/algolia/algoliasearch-client-php#search-in-an-index---search) I would strongly recommend using Algolia's [JavaScript client](https://github.com/algolia/algoliasearch-client-js)
+Like [Algolia](https://www.algolia.com/doc/api-client/php/search/) I would strongly recommend using Algolia's [JavaScript client](https://github.com/algolia/algoliasearch-client-js)
 for the best search experience. You can however use some helpers for doing search on php side:
 
 With the service: 
@@ -356,7 +356,7 @@ With the service:
 $manager->search(Contact::class, 'John Doe');
 ```
 
-The method also accepts [optional search parameters](https://github.com/algolia/algoliasearch-client-php#search-parameters):
+The method also accepts [optional search parameters](https://www.algolia.com/doc/api-client/php/search/#search-parameters):
 
 ```php
 $manager->search(Contact::class, 'John Doe', ['hitsPerPage' => 2, 'attributesToRetrieve' => 'name,address']);
