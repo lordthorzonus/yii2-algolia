@@ -1,5 +1,20 @@
 #Changelog
 
+## 1.3.0
+* Updated the package to depend on ^1.16.0 versions of the [official Algolia client](https://github.com/algolia/algoliasearch-client-php)  
+* Removed methods marked as deprecated from the `leinonen\Yii2Algolia\AlgoliaManager` & `leinonen\Yii2Algolia\AlgoliaManager` @method phpdocs. The methods are still found in the `AlgoliaSearch\Client` so no existing code will break, just no IDE autocompletion anymore. Expect these to be removed in 2.0.0.  This includes methods:
+   * `listUserKeys()`
+   * `getUserKeyACL()`
+   * `deleteUserKey()`
+   * `addUserKey()`
+   * `updateUserKey()`
+* Added @method phpdocs for the new corresponding api key methods:
+   * `listApiKeys()`
+   * `getApiKey()`
+   * `deleteApiKey()`
+   * `addApiKey()`
+   * `updateApiKey()`
+
 ## 1.2.0
 * Small documentation changes
 * Minor refactorings to make the code prettier 
