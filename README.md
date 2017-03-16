@@ -155,9 +155,9 @@ class Contact extends ActiveRecord implements SearchableInterface
 
 You can also also implement the `leinonen\Yii2Algolia\SearchableInterface` for plain old PHP objects and then use the `leinonen\Yii2Algolia\AlgoliaManager` to control them. Note that all helpers are not available for use other than with ActiveRecord classes.
 
-###Indexing
+### Indexing
 
-####Manual Indexing
+#### Manual Indexing
 You can trigger indexing using the `index()` instance method on an ActiveRecord model with the help of `leinonen\Yii2Algolia\Searchable` trait.
 
 ```php
@@ -186,7 +186,7 @@ $contact2->name = 'anotherTest';
 $manager->pushMultipleToIndices([$contact1, $contact2]);
 ```
 
-####Manual Removal
+#### Manual Removal
 Removing is triggered using the `removeFromIndices()` instance method.
 
 ```php
@@ -207,7 +207,7 @@ $contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
 $manager->removeMultipleFromIndices($contacts);
 ```
 
-####Manual Updating
+#### Manual Updating
 Update is triggered using the `updateInIndices()` instance method.
 
 ```php
@@ -231,7 +231,7 @@ foreach($contacts as $contact) {
 $manager->updateMultipleInIndices($contacts);
 ```
 
-####Reindexing
+#### Reindexing
 To safely reindex all your ActiveRecord models(index to a temporary index + move the temporary index to the current one), use the `leinonen\Yii2Algolia\AlgoliaManager::reindex()` method:
 
 ```php
@@ -247,7 +247,7 @@ Contact::reindex();
  In background reindexing is done by chunking through all of the ActiveRecord models of the given class, 500 objects at time. 
  This means you can safely use reindexing even over really large datasets without consuming too much memory. Just mind your Algolia quota.
  
-#####Reindexing By ActiveQuery
+##### Reindexing By ActiveQuery
  If you need to index a lot of related relationships to Algolia you can use the powerful `reindexByActiveQuery()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
  ```php
  $contactsQuery = Contact::find()->joinWith('company')->where(['company_name' => 'Algolia']);
@@ -280,7 +280,7 @@ Contact::reindex();
  }
 ``` 
  
-#####Reindexing With a set of explicit SearchableModels
+##### Reindexing With a set of explicit SearchableModels
  It's also possible to explicitly define which objects should be reindexed. This can be done by using `reindexOnly()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
  ```php
  $contacts = Contact::find()->where(['type' => Contact::TYPE_AWESOME])->all();
@@ -290,7 +290,7 @@ In the background the method figures out the indices of that need to be reindexe
  
  
  
-####Clearing Indices
+#### Clearing Indices
 To clear indices where the ActiveRecord is synced to, use the `clearIndices()` method found in `leinonen\Yii2Algolia\AlgoliaManager` class:
 
 ```php
@@ -303,12 +303,12 @@ You can also use the static method on ActiveRecord class if you prefer Yii's sty
 Contact::clearIndices();
 ```
 
-###Auto-indexing
+### Auto-indexing
 Another solution is to attach the `leinonen\Yii2Algolia\ActiveRecord\SynchronousAutoIndexBehavior` behavior to the ActiveRecord model. This behavior will then trigger automatically when the model is created, updated or deleted. The model needs of course to implement the `leinonen\Yii2Algolia\SearchableInterface` via the mentioned trait or your custom methods.
 
 **Beware that the Algolia API will be called every time separately when something happens to the specified ActiveRecord model. This can cause performance issues.** At the moment Yii2 doesn't provide queues out of the box, so asynchronous updating isn't available.
 
-####Configuration
+#### Configuration
 ```php
 use leinonen\Yii2Algolia\ActiveRecord\Searchable;
 use leinonen\Yii2Algolia\SearchableInterface;
@@ -369,7 +369,7 @@ Contact::search('John Doe');
 Contact::search('John Doe', ['hitsPerPage' => 2, 'attributesToRetrieve' => 'name,address']);
 ```
 
-###Using multiple environments
+### Using multiple environments
 You can automatically prefix all the index names with the current App environment using the following configuration:
 
 ```php
