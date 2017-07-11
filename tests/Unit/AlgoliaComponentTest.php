@@ -4,6 +4,7 @@ namespace leinonen\Yii2Algolia\Tests\Unit;
 
 use Yii;
 use Mockery as m;
+use yii\base\InvalidConfigException;
 use yiiunit\TestCase;
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaFactory;
@@ -74,7 +75,7 @@ class AlgoliaComponentTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Exception
+     * @expectedException \yii\base\InvalidConfigException
      * @expectedExceptionMessage applicationId and apiKey are required
      */
     public function it_throws_an_error_if_applicationId_is_not_specified()
@@ -92,7 +93,7 @@ class AlgoliaComponentTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Exception
+     * @expectedException \yii\base\InvalidConfigException
      * @expectedExceptionMessage applicationId and apiKey are required
      */
     public function it_throws_an_error_if_apiKey_is_not_specified()

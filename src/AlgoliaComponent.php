@@ -9,6 +9,7 @@ use yii\base\Application;
 use yii\base\BootstrapInterface;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
+use yii\base\InvalidConfigException;
 
 /**
  * @method Client getClient()
@@ -119,20 +120,18 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      * Bootstrap method to be called during application bootstrap stage.
      *
      * @param Application $app the application currently running
+     *
+     * @throws InvalidConfigException
      */
     public function bootstrap($app)
     {
+        if (empty($this->applicationId) || empty($this->apiKey)) {
+            throw new InvalidConfigException('applicationId and apiKey are required');
+        }
+
         Yii::$container->set(AlgoliaManager::class, function () {
             return $this->createManager();
         });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function init()
-    {
-        $this->manager = $this->createManager();
     }
 
     /**
@@ -140,7 +139,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      *
      * @return AlgoliaManager
      */
-    protected function createManager()
+    private function createManager()
     {
         $config = $this->generateConfig();
         $client = $this->algoliaFactory->make($config);
@@ -161,6 +160,10 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      */
     public function __call($method, $parameters)
     {
+        if ($this->manager === null) {
+            $this->manager = $this->createManager();
+        }
+
         return \call_user_func_array([$this->manager, $method], $parameters);
     }
 
@@ -172,10 +175,6 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      */
     private function generateConfig()
     {
-        if (empty($this->applicationId) || empty($this->apiKey)) {
-            throw new \Exception('applicationId and apiKey are required');
-        }
-
         $config = new AlgoliaConfig(
             $this->applicationId,
             $this->apiKey,
