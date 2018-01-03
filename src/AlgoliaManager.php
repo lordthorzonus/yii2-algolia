@@ -22,7 +22,15 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
  * @method deleteIndex(string $indexName)
  * @method mixed moveIndex(string $srcIndexName, string $dstIndexName)
  * @method mixed copyIndex(string $srcIndexName, string $dstIndexName)
+ * @method scopedCopyIndex(string $srcIndexName, string $dstIndexName, array $scope = [], array $requestHeaders = [])
  * @method mixed getLogs(int $offset = 0, int $length = 10, string $type = "all")
+ * @method assignUserID($userID, $clusterName)
+ * @method removeUserID($userID)
+ * @method listClusters()
+ * @method getUserID($userID)
+ * @method listUserIDs($page = 0, $hitsPerPage = 20)
+ * @method getTopUserID()
+ * @method searchUserIDs($query, $clusterName = null, $page = null, $hitsPerPage = null)
  * @method Index initIndex(string $indexName)
  * @method mixed listApiKeys()
  * @method mixed getApiKey(string $key)
@@ -34,8 +42,9 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
  * @method string buildQuery(array $args)
  * @method mixed request(\AlgoliaSearch\ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
  * @method mixed doRequest(\AlgoliaSearch\ClientContext $context, string $method, string $path, array $params, array $data, array $hostsArray, int $connectTimeout, int $readTimeout)
- * @method \AlgoliaSearch\PlacesIndex initPlaces(string $appId, string $appKey, array $hostsArray = null, array $options = [])
+ * @method \AlgoliaSearch\PlacesIndex initPlaces(string $appId = null, string $appKey = null, array $hostsArray = null, array $options = [])
  * @method getContext()
+ *
  * @see Client
  */
 class AlgoliaManager
