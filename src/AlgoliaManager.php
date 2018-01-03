@@ -4,6 +4,7 @@ namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Index;
 use AlgoliaSearch\Client;
+use leinonen\Yii2Algolia\ActiveRecord\Searchable;
 use yii\db\ActiveQueryInterface;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
@@ -387,15 +388,13 @@ class AlgoliaManager
     {
         $indexNames = $searchableModel->getIndices();
 
-        $indices = \array_map(function ($indexName) {
+        return \array_map(function ($indexName) {
             if ($this->env !== null) {
                 $indexName = $this->env . '_' . $indexName;
             }
 
             return $this->initIndex($indexName);
         }, $indexNames);
-
-        return $indices;
     }
 
     /**
@@ -415,7 +414,7 @@ class AlgoliaManager
         $arrayType = \get_class($searchableModels[0]);
         $this->checkImplementsSearchableInterface($arrayType);
 
-        $algoliaRecords = \array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
+        return \array_map(function (SearchableInterface $searchableModel) use ($arrayType) {
             if (! $searchableModel instanceof $arrayType) {
                 throw new \InvalidArgumentException('The given array should not contain multiple different classes');
             }
@@ -425,8 +424,6 @@ class AlgoliaManager
 
             return $algoliaRecord;
         }, $searchableModels);
-
-        return $algoliaRecords;
     }
 
     /**

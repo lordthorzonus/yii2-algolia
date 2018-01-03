@@ -7,8 +7,6 @@ use yii\base\Component;
 use AlgoliaSearch\Client;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use yii\base\InvalidConfigException;
 
 /**
@@ -86,32 +84,16 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     private $algoliaFactory;
 
     /**
-     * @var ActiveRecordFactory
-     */
-    private $activeRecordFactory;
-
-    /**
-     * @var ActiveQueryChunker
-     */
-    private $activeQueryChunker;
-
-    /**
      * Initiates a new AlgoliaComponent.
      *
      * @param AlgoliaFactory $algoliaFactory
-     * @param ActiveRecordFactory $activeRecordFactory
-     * @param ActiveQueryChunker $activeQueryChunker
      * @param array $config
      */
     public function __construct(
         AlgoliaFactory $algoliaFactory,
-        ActiveRecordFactory $activeRecordFactory,
-        ActiveQueryChunker $activeQueryChunker,
         $config = []
     ) {
         $this->algoliaFactory = $algoliaFactory;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->activeQueryChunker = $activeQueryChunker;
 
         parent::__construct($config);
     }
@@ -142,9 +124,8 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     private function createManager()
     {
         $config = $this->generateConfig();
-        $client = $this->algoliaFactory->make($config);
 
-        $algoliaManager = new AlgoliaManager($client, $this->activeRecordFactory, $this->activeQueryChunker);
+        $algoliaManager = $this->algoliaFactory->make($config);
         $algoliaManager->setEnv($this->env);
 
         return $algoliaManager;
@@ -171,17 +152,14 @@ class AlgoliaComponent extends Component implements BootstrapInterface
      * Generates config for the Algolia Manager.
      *
      * @return AlgoliaConfig
-     * @throws \Exception
      */
     private function generateConfig()
     {
-        $config = new AlgoliaConfig(
+        return new AlgoliaConfig(
             $this->applicationId,
             $this->apiKey,
             $this->hostsArray,
             $this->options
         );
-
-        return $config;
     }
 }

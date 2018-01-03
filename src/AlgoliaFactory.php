@@ -3,6 +3,8 @@
 namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Client;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
 class AlgoliaFactory
 {
@@ -11,15 +13,21 @@ class AlgoliaFactory
      *
      * @param AlgoliaConfig $config
      *
-     * @return Client
+     * @return AlgoliaManager
+     *
+     * @throws \Exception
      */
     public function make(AlgoliaConfig $config)
     {
-        return new Client(
-            $config->getApplicationId(),
-            $config->getApiKey(),
-            $config->getHostsArray(),
-            $config->getOptions()
+        return new AlgoliaManager(
+            new Client(
+                $config->getApplicationId(),
+                $config->getApiKey(),
+                $config->getHostsArray(),
+                $config->getOptions()
+            ),
+            new ActiveRecordFactory(),
+            new ActiveQueryChunker()
         );
     }
 
@@ -29,6 +37,8 @@ class AlgoliaFactory
      * @param string $className
      *
      * @return SearchableInterface
+     *
+     * @throws \InvalidArgumentException
      */
     public function makeSearchableObject($className)
     {

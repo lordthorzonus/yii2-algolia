@@ -1,10 +1,16 @@
 #Changelog
 
 ## 2.0.0
+This is a breaking release. All the changes have been marked with probability will it affect your code.
+
+Nothing from the `AlgoliaManager`'s public api is changed so if you are not extending this packages internal classes or using them in some really custom way you should be safe to upgrade without changes.
+
 * `init()` removed from the AlgoliaComponent ![probably won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-probably%20won't-green.svg)
 * `createManager()` visibility changed to private in AlgoliaComponent ![probably won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-probably%20won't-green.svg)
 * `yii\base\InvalidConfigException` is thrown instead of `Exception` in case of invalid configuration for the AlgoliaComponent ![probably won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-probably%20won't-green.svg)
-*
+* AlgoliaComponent is now only dependent on AlgoliaFactory. ![maybe won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-maybe%20won't-yellowgreen.svg)
+* `leinonen\Yii2Algolia\AlgoliaFactory::make()`  now returns instances of AlgoliaManager instead of `AlgoliaSearch\Client` ![maybe won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-maybe%20won't-yellowgreen.svg)
+
 
 ## 1.3.0
 * Updated the package to depend on ^1.16.0 versions of the [official Algolia client](https://github.com/algolia/algoliasearch-client-php)  
