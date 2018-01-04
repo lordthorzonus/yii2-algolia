@@ -62,9 +62,7 @@ trait Searchable
      */
     public function getAlgoliaRecord()
     {
-        $record = $this->toArray();
-
-        return $record;
+        return $this->toArray();
     }
 
     /**
@@ -84,7 +82,7 @@ trait Searchable
      */
     public function index()
     {
-        $manager = $this->getAlgoliaManager();
+        $manager = static::getAlgoliaManager();
 
         return $manager->pushToIndices($this);
     }
@@ -96,7 +94,7 @@ trait Searchable
      */
     public function removeFromIndices()
     {
-        $manager = $this->getAlgoliaManager();
+        $manager = static::getAlgoliaManager();
 
         return $manager->removeFromIndices($this);
     }
@@ -108,7 +106,7 @@ trait Searchable
      */
     public function updateInIndices()
     {
-        $manager = $this->getAlgoliaManager();
+        $manager = static::getAlgoliaManager();
 
         return $manager->updateInIndices($this);
     }

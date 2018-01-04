@@ -155,7 +155,7 @@ class AlgoliaComponent extends Component implements BootstrapInterface
 
         return $algoliaManager;
     }
-    
+
     /**
      * Generates config for the Algolia Manager.
      *

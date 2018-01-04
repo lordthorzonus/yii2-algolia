@@ -11,6 +11,9 @@ Nothing from the `AlgoliaManager`'s public api is changed so if you are not exte
 * AlgoliaComponent is now only dependent on AlgoliaFactory. ![maybe won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-maybe%20won't-yellowgreen.svg)
 * `leinonen\Yii2Algolia\AlgoliaFactory::make()`  now returns instances of AlgoliaManager instead of `AlgoliaSearch\Client` ![maybe won't](https://img.shields.io/badge/will%20it%20affect%20me%3F-maybe%20won't-yellowgreen.svg)
 
+Additions and other changes:
+
+ * Updated the package to depend on ^1.25.0 versions of the [official Algolia client](https://github.com/algolia/algoliasearch-client-php) and added all the new methods to the @method phpdocs.
 
 ## 1.3.0
 * Updated the package to depend on ^1.16.0 versions of the [official Algolia client](https://github.com/algolia/algoliasearch-client-php)  
