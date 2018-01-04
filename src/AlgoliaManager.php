@@ -4,8 +4,8 @@ namespace leinonen\Yii2Algolia;
 
 use AlgoliaSearch\Index;
 use AlgoliaSearch\Client;
-use leinonen\Yii2Algolia\ActiveRecord\Searchable;
 use yii\db\ActiveQueryInterface;
+use leinonen\Yii2Algolia\ActiveRecord\Searchable;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
 use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
@@ -50,9 +50,9 @@ use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 class AlgoliaManager
 {
     /**
-      * Size for the chunks used in reindexing methods.
-      */
-     const CHUNK_SIZE = 500;
+     * Size for the chunks used in reindexing methods.
+     */
+    const CHUNK_SIZE = 500;
 
     /**
      * @var AlgoliaFactory

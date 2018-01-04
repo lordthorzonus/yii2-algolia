@@ -2,7 +2,6 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit;
 
-use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaConfig;
 use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
