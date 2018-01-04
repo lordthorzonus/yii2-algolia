@@ -125,21 +125,6 @@ class AlgoliaComponent extends Component implements BootstrapInterface
     }
 
     /**
-     * Returns a new AlgoliaManager.
-     *
-     * @return AlgoliaManager
-     */
-    private function createManager()
-    {
-        $config = $this->generateConfig();
-
-        $algoliaManager = $this->algoliaFactory->make($config);
-        $algoliaManager->setEnv($this->env);
-
-        return $algoliaManager;
-    }
-
-    /**
      * Dynamically pass methods to the AlgoliaManager.
      *
      * @param string $method
@@ -156,6 +141,21 @@ class AlgoliaComponent extends Component implements BootstrapInterface
         return \call_user_func_array([$this->manager, $method], $parameters);
     }
 
+    /**
+     * Returns a new AlgoliaManager.
+     *
+     * @return AlgoliaManager
+     */
+    private function createManager()
+    {
+        $config = $this->generateConfig();
+
+        $algoliaManager = $this->algoliaFactory->make($config);
+        $algoliaManager->setEnv($this->env);
+
+        return $algoliaManager;
+    }
+    
     /**
      * Generates config for the Algolia Manager.
      *
