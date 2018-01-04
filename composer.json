@@ -29,6 +29,12 @@
             "leinonen\\Yii2Algolia\\Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "scripts" : {
         "post-install-cmd" : [
             "cp -n phpunit.xml.dist phpunit.xml"
