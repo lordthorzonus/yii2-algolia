@@ -2,6 +2,8 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit;
 
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use Mockery as m;
 use yii\base\InvalidConfigException;
@@ -18,13 +20,22 @@ class AlgoliaComponentTest extends TestCase
      */
     private $mockAlgoliaClient;
 
+    private $algoliaManager;
+
     public function setUp()
     {
         parent::setUp();
 
         $mockAlgoliaFactory = m::mock(AlgoliaFactory::class);
         $this->mockAlgoliaClient = m::mock(Client::class);
-        $mockAlgoliaFactory->shouldReceive('make')->andReturn($this->mockAlgoliaClient);
+
+        $this->algoliaManager = new AlgoliaManager(
+            $this->mockAlgoliaClient,
+            new ActiveRecordFactory(),
+            new ActiveQueryChunker()
+        );
+
+        $mockAlgoliaFactory->shouldReceive('make')->andReturn($this->algoliaManager);
         Yii::$container->set(AlgoliaFactory::class, $mockAlgoliaFactory);
 
         $this->mockWebApplication([

@@ -5,17 +5,18 @@ namespace leinonen\Yii2Algolia\Tests\Unit;
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaConfig;
 use leinonen\Yii2Algolia\AlgoliaFactory;
+use leinonen\Yii2Algolia\AlgoliaManager;
 use leinonen\Yii2Algolia\Tests\Helpers\DummyActiveRecordModel;
 
 class AlgoliaFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @test */
-    public function it_can_create_a_new_Algolia_Client_instance()
+    public function it_can_create_a_new_AlgoliaManager()
     {
         $factory = new AlgoliaFactory();
-        $client = $factory->make(new AlgoliaConfig('app-id', 'secret'));
+        $manager = $factory->make(new AlgoliaConfig('app-id', 'secret'));
 
-        $this->assertInstanceOf(Client::class, $client);
+        $this->assertInstanceOf(AlgoliaManager::class, $manager);
     }
 
     /** @test */
