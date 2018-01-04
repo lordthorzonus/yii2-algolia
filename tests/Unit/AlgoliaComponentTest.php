@@ -2,16 +2,15 @@
 
 namespace leinonen\Yii2Algolia\Tests\Unit;
 
-use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
-use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 use Yii;
 use Mockery as m;
-use yii\base\InvalidConfigException;
 use yiiunit\TestCase;
 use AlgoliaSearch\Client;
 use leinonen\Yii2Algolia\AlgoliaFactory;
 use leinonen\Yii2Algolia\AlgoliaManager;
 use leinonen\Yii2Algolia\AlgoliaComponent;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveQueryChunker;
+use leinonen\Yii2Algolia\ActiveRecord\ActiveRecordFactory;
 
 class AlgoliaComponentTest extends TestCase
 {
