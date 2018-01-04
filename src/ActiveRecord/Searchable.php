@@ -153,10 +153,11 @@ trait Searchable
     /**
      * Returns the AlgoliaManager Instance.
      *
+     * @internal Marked as protected only to counter the problems with mocking.
+     *
      * @return AlgoliaManager
-     * @throws \yii\base\InvalidConfigException
      */
-    private static function getAlgoliaManager()
+    protected static function getAlgoliaManager()
     {
         return Yii::$container->get(AlgoliaManager::class);
     }

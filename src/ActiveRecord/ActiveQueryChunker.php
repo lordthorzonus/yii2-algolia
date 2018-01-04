@@ -25,7 +25,7 @@ class ActiveQueryChunker
             // On each chunk, pass the records to the callback and then let the
             // developer take care of everything within the callback. This allows to
             // keep the memory low when looping through large result sets.
-            $callableResults = \call_user_func($callback, $records);
+            $callableResults = $callback($records);
 
             if ($callableResults === false) {
                 break;
